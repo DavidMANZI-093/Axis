@@ -7,9 +7,6 @@ export class Terminal {
     }
 
     _moveCursor(x: number, y: number) {
-        if (x < 0 || y < 0) {
-            throw new Error("Cursor positions must be non-negative.");
-        }
         process.stdout.write(`\x1b[${y + 1};${x + 1}H`)
     }
 
@@ -20,7 +17,7 @@ export class Terminal {
     drawPoints(vertices: Array<Vector2>, char: string = "@") {
         vertices.map((vertex) => {
             this._moveCursor(vertex.x, vertex.y);
-            process.stdout.write(char);
+            process.stdout.write(`${char}\n`);
         });
     }
 
