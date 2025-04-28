@@ -1,3 +1,5 @@
+import { Vector3 } from "./vector";
+
 /**
  * Angle class to represent angles in degrees.
  */

@@ -1,3 +1,5 @@
+import { Vector2, Vector3 } from "./vector";
+
 /**
  * Projection class for converting 3D coordinates to 2D screen coordinates.
  */

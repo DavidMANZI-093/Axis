@@ -2,7 +2,7 @@
  * Vector3 class representing a 3D vector with basic operations.
  * @class Vector3
  */
-class Vector3 {
+export class Vector3 {
     /**
      * 
      * @param x - the x-coordinate of the vector
@@ -53,7 +53,7 @@ class Vector3 {
 /**
  * Vector2 class representing a 2D vector with basic operations.
  */
-class Vector2 {
+export class Vector2 {
     /**
      * 
      * @param x - the x-coordinate of the vector

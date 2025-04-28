@@ -1,7 +1,9 @@
+import { Vector3 } from "../math/vector";
+
 /**
  * Object3D class that contains methods to create 3D shapes like cubes and prisms.
  */
-class Object3D {
+export class Object3D {
     /**
      * Creates a cube shape with the given origin and scale.
      * @param origin - the center point of the cube
