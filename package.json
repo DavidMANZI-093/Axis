@@ -4,13 +4,17 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "build": "tsc",
+    "start": "node dist/main.js",
+    "dev": "tsc --watch",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "MANZI David Mercy",
   "license": "ISC",
   "type": "commonjs",
-  "dependencies": {
+  "devDependencies": {
+    "@types/node": "^22.15.3",
     "typescript": "^5.8.3"
   }
 }
