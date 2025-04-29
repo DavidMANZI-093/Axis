@@ -3,7 +3,7 @@ import { Vector2, Vector3 } from "./vector";
 /**
  * Projection class for converting 3D coordinates to 2D screen coordinates.
  */
-class Projection {
+export class Projection {
     /**
      * 
      * @param _screenWidth - the width of the screen
@@ -14,7 +14,7 @@ class Projection {
     constructor(
         public _screenWidth: number = process.stdout.columns,
         public _screenHeight: number = process.stdout.rows,
-        public _fov: number = 1,
+        public _fov: number = 40,
         public _distanceOffset: number = 1,
     ) {}
 

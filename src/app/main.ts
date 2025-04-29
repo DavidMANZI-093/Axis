@@ -1,18 +1,250 @@
-import { Vector3 } from '../core/math/vector';
+import { Vector3, Vector2 } from '../core/math/vector';
 import { Object3D } from '../core/object3d/shape';
-import readline from 'readline';
 import { Terminal } from '../core/renderer/terminal';
+import { Projection } from '../core/math/projection';
+import { Angle } from '../core/math/rotation';
+import { Transformation } from '../core/object3d/transformation';
+import { Settings } from './settings';
+import { Timer } from '../utils/timer';
+import { Logger, LogLevel } from '../utils/logger';
+import { Shading } from '../core/renderer/shading';
+import * as readline from 'readline';
 
-const terminal = new Terminal;
-const object3D = new Object3D;
+/**
+ * Main class for the 3D terminal animation.
+ */
+class Main {
+  // Class variables
+  private _terminal: Terminal;
+  private _object3D: Object3D;
+  private _projector: Projection;
+  private _shading: Shading;
+  private _logger: Logger;
+  private _timer: Timer;
 
-terminal.drawPoints(object3D.createCube(new Vector3(1, 3, 5), 5), "*");
-
-const rl = readline.createInterface({
-    input: process.stdin,
-    output: process.stdout
-});
+  // Animation variables
+  private _rotationX: number = 0;
+  private _rotationY: number = 0;
+  private _rotationZ: number = 0;
+  private _currentShape: string = 'cube';
+  private _vertices: Vector3[];
   
-rl.question("Press Enter to exit...", () => {
-    rl.close();
-});
+  // Shape definitions
+  private _shapes: { [key: string]: () => Vector3[] };
+  
+  // Face definitions for shapes
+  private _cubeFaces: number[][] = [
+    // Front face
+    [0, 1, 2], [1, 3, 2],
+    // Back face
+    [4, 6, 5], [5, 6, 7],
+    // Left face
+    [0, 2, 4], [2, 6, 4],
+    // Right face
+    [1, 5, 3], [3, 5, 7],
+    // Top face
+    [2, 3, 6], [3, 7, 6],
+    // Bottom face
+    [0, 4, 1], [1, 4, 5]
+  ];
+  
+  // Define prism faces (triangles)
+  private _prismFaces: number[][] = [
+    // Base triangle
+    [0, 1, 2],
+    // Top triangle
+    [3, 4, 5],
+    // Side 1
+    [0, 3, 1], [1, 3, 4],
+    // Side 2
+    [1, 4, 2], [2, 4, 5],
+    // Side 3
+    [2, 5, 0], [0, 5, 3]
+  ];
+
+  /**
+   * Creates a new Main instance.
+   */
+  constructor() {
+    // Initialize components
+    this._terminal = new Terminal();
+    this._object3D = new Object3D();
+    this._projector = new Projection(
+      this._terminal.getWidth(),
+      this._terminal.getHeight()
+    );
+    this._shading = new Shading();
+    this._logger = new Logger(true, LogLevel.INFO);
+    
+    // Define available shapes
+    this._shapes = {
+      cube: () => this._object3D.createCube(new Vector3(0, 0, 0), Settings.OBJECT_SCALE),
+      prism: () => this._object3D.createPrism(new Vector3(0, 0, 0), Settings.OBJECT_SCALE, Settings.OBJECT_SCALE * 1.5)
+    };
+    
+    // Create the initial 3D object
+    this._vertices = this._shapes[this._currentShape]();
+    
+    // Initialize animation timer
+    this._timer = new Timer(Settings.FPS, this._update.bind(this));
+    
+    this._logger.info("3D Terminal Animation initialized");
+  }
+
+  /**
+   * Starts the animation.
+   */
+  start(): void {
+    this._logger.info("Starting animation");
+    this._setupControls();
+    this._timer.start();
+  }
+
+  /**
+   * Sets up keyboard controls.
+   */
+  private _setupControls(): void {
+    // Set stdin to raw mode to capture keystrokes
+    readline.emitKeypressEvents(process.stdin);
+    if (process.stdin.isTTY) {
+      process.stdin.setRawMode(true);
+    }
+
+    process.stdin.on('keypress', (str, key) => {
+      if (key.ctrl && key.name === 'c') {
+        this._logger.info("Exiting application");
+        process.exit();
+      }
+
+      switch (key.name) {
+        case 'x':
+          this._rotationX += Settings.ANIMATION_SPEED;
+          this._logger.debug(`Rotation X: ${this._rotationX}`);
+          break;
+        case 'y':
+          this._rotationY += Settings.ANIMATION_SPEED;
+          this._logger.debug(`Rotation Y: ${this._rotationY}`);
+          break;
+        case 'z':
+          this._rotationZ += Settings.ANIMATION_SPEED;
+          this._logger.debug(`Rotation Z: ${this._rotationZ}`);
+          break;
+        case 'r':
+          this._rotationX = 0;
+          this._rotationY = 0;
+          this._rotationZ = 0;
+          this._logger.info("Reset rotation");
+          break;
+        case 's':
+          this._cycleShape();
+          this._logger.info(`Switched to shape: ${this._currentShape}`);
+          break;
+        case 'q':
+          this._logger.info("Exiting application");
+          process.exit();
+          break;
+      }
+    });
+
+    this._logger.info("Controls: X/Y/Z - rotate, R - reset, S - switch shape, Q - quit");
+  }
+
+  /**
+   * Cycles through available shapes.
+   */
+  private _cycleShape(): void {
+    const shapes = Object.keys(this._shapes);
+    const currentIndex = shapes.indexOf(this._currentShape);
+    const nextIndex = (currentIndex + 1) % shapes.length;
+    this._currentShape = shapes[nextIndex];
+    this._vertices = this._shapes[this._currentShape]();
+  }
+
+  /**
+   * Updates and renders a single animation frame.
+   */
+  private _update(): void {
+    try {
+      // Clear the buffer for the next frame
+      this._terminal.clearBuffer();
+      
+      // Auto-rotate the object
+      this._rotationX += Settings.ANIMATION_SPEED / 2;
+      this._rotationY += Settings.ANIMATION_SPEED / 4;
+      
+      // Apply rotation to vertices
+      const rotatedVertices = Transformation.rotate(
+        this._vertices,
+        new Angle(this._rotationX),
+        new Angle(this._rotationY),
+        new Angle(this._rotationZ)
+      );
+      
+      // Move the object away from the camera for better visibility
+      const translatedVertices = Transformation.translate(
+        rotatedVertices,
+        new Vector3(0, 0, Settings.RENDER_DISTANCE)
+      );
+      
+      // Project 3D vertices to 2D
+      const projectedVertices = this._projector.project3Dto2D(translatedVertices);
+      
+      // Get current shape faces
+      const faces = this._currentShape === 'cube' ? this._cubeFaces : this._prismFaces;
+      
+      // Render each face with appropriate shading
+      this._renderFaces(translatedVertices, projectedVertices, faces);
+      
+      // Render info text
+      this._terminal.drawText(2, 2, `Shape: ${this._currentShape}`, 0);
+      this._terminal.drawText(2, 3, `FPS: ${this._timer.getCurrentFps().toFixed(1)}`, 0);
+      this._terminal.drawText(2, 4, `Rotation: X=${this._rotationX.toFixed(1)} Y=${this._rotationY.toFixed(1)} Z=${this._rotationZ.toFixed(1)}`, 0);
+      
+      // Render the frame
+      this._terminal.render();
+    } catch (error) {
+      this._logger.error(`Error in update: ${error}`);
+    }
+  }
+
+  /**
+   * Renders the faces of the 3D object with shading.
+   * @param vertices3D - 3D vertices after transformation
+   * @param vertices2D - 2D projected vertices
+   * @param faces - faces definition (triangle indices)
+   */
+  private _renderFaces(vertices3D: Vector3[], vertices2D: Vector2[], faces: number[][]): void {
+    for (const face of faces) {
+      // Get the vertices for this face
+      const v1 = vertices3D[face[0]];
+      const v2 = vertices3D[face[1]];
+      const v3 = vertices3D[face[2]];
+      
+      // Calculate face normal for lighting
+      const normal = this._shading.calculateNormal(v1, v2, v3);
+      
+      // Calculate average face position (for depth and lighting)
+      const faceCenter = new Vector3(
+        (v1.x + v2.x + v3.x) / 3,
+        (v1.y + v2.y + v3.y) / 3,
+        (v1.z + v2.z + v3.z) / 3
+      );
+      
+      // Check if face is facing towards the camera (back-face culling)
+      if (faceCenter.z > 0) {
+        // Calculate light intensity and get appropriate ASCII character
+        const intensity = this._shading.calculateLightIntensity(faceCenter, normal);
+        const shadeChar = this._shading.getShadeChar(intensity);
+        
+        // Draw the triangle edges
+        this._terminal.drawLine(vertices2D[face[0]], vertices2D[face[1]], shadeChar, faceCenter.z);
+        this._terminal.drawLine(vertices2D[face[1]], vertices2D[face[2]], shadeChar, faceCenter.z);
+        this._terminal.drawLine(vertices2D[face[2]], vertices2D[face[0]], shadeChar, faceCenter.z);
+      }
+    }
+  }
+}
+
+// Create and start the application
+const app = new Main();
+app.start();

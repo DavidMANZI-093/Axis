@@ -3,7 +3,7 @@ import { Vector3 } from "./vector";
 /**
  * Angle class to represent angles in degrees.
  */
-class Angle {
+export class Angle {
     /**
      * 
      * @param degrees - the angle in degrees
@@ -32,7 +32,7 @@ class Angle {
  * const angle = new Angle(90);
  * const rotatedVector = rotateX(vector, angle); // rotatedVector is Vector3(1, -3, 2)
  */
-function rotateX(vector: Vector3, angle: Angle): Vector3 {
+export function rotateX(vector: Vector3, angle: Angle): Vector3 {
     const rad = angle.toRadians();
     const cos = Math.cos(rad);
     const sin = Math.sin(rad);
@@ -53,7 +53,7 @@ function rotateX(vector: Vector3, angle: Angle): Vector3 {
  * const angle = new Angle(90);
  * const rotatedVector = rotateY(vector, angle); // rotatedVector is Vector3(3, 2, -1)
  */
-function rotateY(vector: Vector3, angle: Angle): Vector3 {
+export function rotateY(vector: Vector3, angle: Angle): Vector3 {
     const rad = angle.toRadians();
     const cos = Math.cos(rad);
     const sin = Math.sin(rad);
@@ -74,7 +74,7 @@ function rotateY(vector: Vector3, angle: Angle): Vector3 {
  * const angle = new Angle(90);
  * const rotatedVector = rotateZ(vector, angle); // rotatedVector is Vector3(-2, 1, 3)
  */
-function rotateZ(vector: Vector3, angle: Angle): Vector3 {
+export function rotateZ(vector: Vector3, angle: Angle): Vector3 {
     const rad = angle.toRadians();
     const cos = Math.cos(rad);
     const sin = Math.sin(rad);
