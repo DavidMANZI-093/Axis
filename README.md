@@ -30,12 +30,175 @@ Let’s consider a cube. In mathematics, any 3D object like a cube is represente
 - $y$ represents up and down,
 - $z$ represents depth — in and out of the screen (well... if only our screen could let things pop out for real!).
 
-<figure style='display: flex; flex-direction: column; margin: 2rem 0; gap: 1rem'>
+<figure style='display: flex; flex-direction: column; margin: 2rem auto; gap: 1rem'>
     <img src='https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Coord_planes_color.svg/800px-Coord_planes_color.svg.png' alt='A representation of a three-dimensional Cartesian coordinate system' style='display: block; margin: 0 auto; height: 16rem; background-color: #fff; border-radius: 0.5rem'>
-    <figcaption style='font-style: italic; margin: 0 auto'>A representation of a three-dimensional Cartesian coordinate system</figcaption>
+    <figcaption style='font-style: italic; margin: 0 auto; font-size: 85%'>A representation of a three-dimensional Cartesian coordinate system</figcaption>
 </figure>
 
 Now, in 2D space, things are a bit simpler — and more practical for our terminal-based project. Here, we only work with (x,y) coordinates. That means we lose the depth component, which is where projection comes in... but let’s not get ahead of ourselves just yet.
+
+<figure style='display: flex; flex-direction: column; margin: 2rem auto; gap: 1rem'>
+    <img src='https://upload.wikimedia.org/wikipedia/commons/thumb/0/0e/Cartesian-coordinate-system.svg/250px-Cartesian-coordinate-system.svg.png' alt='Illustration of a Cartesian coordinate plane. Four points are marked and labeled with their coordinates: (2, 3) in green, (−3, 1) in red, (−1.5, −2.5) in blue, and the origin (0, 0) in purple.' style='display: block; margin: 0 auto; height: 16rem; background-color: #fff; border-radius: 0.5rem'>
+    <figcaption style='font-style: italic; margin: 0 auto; font-size: 85%'>Illustration of a two-dimension Cartesian coordinate system. Four points are marked and labeled with their coordinates: (2, 3) in green, (−3, 1) in red, (−1.5, −2.5) in blue, and the origin (0, 0) in purple.</figcaption>
+</figure>
+
+### Rotation in 3D Space
+
+Rotation is a key mathematical concept that brings our 3D cube to life by animating it frame by frame. It allows us to turn or spin our 3D object along any axis — and that’s exactly what makes it feel dynamic.
+
+To rotate points in 3D space, we apply trigonometric functions like $sine()$ and $cosine()$ to their coordinates. Each rotation is done around a specific axis — X, Y, or Z — and for each axis, we have a specific formula that transforms a point's position.
+
+- Rotating around the X-axis affects the Y and Z coordinates:
+
+$$
+\begin{bmatrix}
+x' \\
+y' \\
+z'
+\end{bmatrix}
+= 
+\begin{bmatrix}
+x \\
+y.\cos(\theta) - z.\sin(\theta) \\
+y.\sin(\theta) + z.\cos(\theta)
+\end{bmatrix}
+$$
+
+- This changes the X and Z coordinates:
+
+$$
+\begin{bmatrix}
+x' \\
+y' \\
+z'
+\end{bmatrix}
+= 
+\begin{bmatrix}
+x.\cos(\theta) - z.\sin(\theta) \\
+y \\
+-x.\sin(\theta) + z.\cos(\theta)
+\end{bmatrix}
+$$
+
+- This affects the X and Y coordinates:
+
+$$
+\begin{bmatrix}
+x' \\
+y' \\
+z'
+\end{bmatrix}
+= 
+\begin{bmatrix}
+x.\cos(\theta) - y.\sin(\theta) \\
+y.\sin(\theta) + z.\cos(\theta) \\
+z
+\end{bmatrix}
+$$
+
+We can apply these rotations individually or combine them by applying them one after another. That’s how we’ll simulate smooth spinning — just to keep rotating slightly over time!
+
+We’ll later turn these into reusable code in our object-oriented setup.
+
+## Projection
+
+In 3D graphics, projection is the process of translating 3D points onto a 2D plane — sort of like casting the shadow of a 3D shape onto a flat surface. While our cube lives and rotates freely in 3D space, when it's time to render it in the terminal (which is 2D), we use mathematics to flatten those 3D coordinates into something drawable.
+
+This process lets us simulate depth and movement even though the terminal has no concept of real 3D space.
+
+There are two main types of projection:
+
+- **Perspective projection**: This approach mimics how our eyes work: objects farther away appear smaller. It introduces realistic depth by scaling based on the z coordinate (depth). However, it's not always practical in low-resolution environments like a terminal — where precision is limited by character size.
+
+<div style='display: flex; gap: 2rem; margin: 0 auto;'>
+    <figure style='display: flex; flex-direction: column; margin: 2rem auto; gap: 1rem'>
+        <img src='https://upload.wikimedia.org/wikipedia/commons/thumb/d/d7/3-punktperspektive_1.svg/800px-3-punktperspektive_1.svg.png' alt='Three-point perspective' style='display: block; margin: 0 auto; height: 10rem; background-color: #fff; border-radius: 0.5rem'>
+        <figcaption style='font-style: italic; margin: 0 auto; font-size: 85%'>Illustration of a three-point perspective.</figcaption>
+    </figure>
+    <figure style='display: flex; flex-direction: column; margin: 2rem 0; gap: 1rem'>
+        <img src='https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/2-punktperspektive.svg/800px-2-punktperspektive.svg.png' alt='Two-point perspective' style='display: block; margin: 0 auto; height: 10rem; background-color: #fff; border-radius: 0.5rem'>
+        <figcaption style='font-style: italic; margin: 0 auto; font-size: 85%'>Illustration of a two-point perspective.</figcaption>
+    </figure>
+</div>
+
+- **Orthographic projection**: In orthographic projection, objects maintain their size regardless of depth. It ignores the z-axis for scaling, keeping things simple and accurate. Though it's less “realistic,” it's perfect for clean, readable representations, especially in text-based or schematic visualizations.
+
+<figure style='display: flex; flex-direction: column; margin: 2rem 0; gap: 1rem'>
+    <img src='https://upload.wikimedia.org/wikipedia/commons/thumb/4/48/Axonometric_projection.svg/800px-Axonometric_projection.svg.png' alt='Axonometric projection.' style='display: block; margin: 0 auto; height: 16rem; background-color: #fff; border-radius: 0.5rem'>
+    <figcaption style='font-style: italic; margin: 0 auto; font-size: 85%'>Illustration of a 3D to 2D orthographic projection.</figcaption>
+</figure>
+
+We’ll be using orthographic projection in this project, because it provides a stable and clear representation of our cube that suits terminal rendering just right.
+
+### Math Behind Orthographic Projection
+
+As we discussed above, in orthographic projection, the size of the object — a cube, in our case — remains constant no matter how far it moves from the viewer. It’s as if we’re observing the cube from an infinitely far distance, where our line of sight becomes perfectly parallel. Because of this, parallel lines never converge, and there’s no illusion of depth caused by scaling. This allows us to represent the cube clearly and consistently, which is especially helpful when working in environments like the terminal where every pixel (or character) counts!
+
+Given a 3D point $(x,y,z)$, its 2D screen projection is:
+
+$x' = x.scale$ and $y' = y.scale$ or $P' = (x.scale,y.scale)$
+
+Simple scaling might be applied to $x$ and $y$.
+
+$z$ is ignored completely in the projection (intesrestingly, it can still be used for sorting, like in hidden surface removal or layering).
+
+## Lighting
+
+In our real world, what we see is just light bouncing off surfaces into our eyes. In a 3D space, we can simulate lighting by making surfaces appear:
+
+- **Bright** if they're facing the light,
+
+- **Dim** if they're turned away,
+
+- And **dark** if they're in shadow (though we're not simulating shadows here).
+
+We'll be modeling this using vectors and dot products, following a classic and elegant mathematical approach.
+
+### Lambert's Cosine Law &mdash; The Math of Diffuse Lighting
+
+This is a physics classic, and it tells us that:
+
+>*"The amount of light hitting a surface is proportional to the cosine of the angle between the light direction and the surface normal." &mdash; **Johann Heinrich Lambert, 1760, Photomotria***
+
+Mathematically:
+
+$$
+I_{\text{diffuse}} = \max(0, \vec{N} \cdot \vec{L})
+$$
+
+Let's unpack this aligning to our own terms:
+
+- Let $\vec{N}$ be the normal vector of a surface on our cube (a unit vector).
+- Let $\vec{L}$ be the light direction vector, pointing from the surface point but also normalized.
+- Let's also introduce constant $A$ for **ambient light**&mdash;a small amount of background light (typically between 0 and 1) that keeps the surface from going completely dark when it faces away from the light.
+
+So, the total light intensity $I_{\text{diffuse}}$ at a given point on our cube is:
+
+$$
+I_{\text{diffuse}} = \max(0, \vec{N} \cdot \vec{L}) + A
+$$
+
+Here's what's going on:
+
+- The dot product $\vec{N}.\vec{L} = \cos(\theta)$, where $\theta$ is the gievn angle between the surface normal and the light direction.
+
+- If the surface faces directly toward the light, $\theta = 0^\circ$, so $\cos(\theta) = 1$ &rightarrow; maximum brightness.
+
+- If it faces away, $\theta = 180^\circ$, so $\cos(\theta) = -1$ &rightarrow; darkness (but we clamp that to zero using the $max()$ function).
+
+- The ambient light $A$ makes sure that even those unshaded areas still get a soft touch of light.
+
+To make sure the final intensity doesn’t overshoot, we clamp the total value between 0 and 1:
+
+$$
+I_\text{diffuse} = \min(1,\max(0,(\vec{N}).(\vec{L})+A))
+$$
+
+And there we have it: a beautifully simple yet realistic lighting model driven by pure angles. It’s the math behind flat shading.
+
+
+
+## Axis Directory Tree
 
     /src
     ├── core/
