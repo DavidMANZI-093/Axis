@@ -16,7 +16,7 @@ export class Projection {
         public _screenWidth: number = process.stdout.columns,
         public _screenHeight: number = process.stdout.rows,
         public _scale: number = 1,
-        public _zOffset: number = 5,
+        public _zOffset?: number
     ) {}
 
     /**

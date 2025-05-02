@@ -46,17 +46,17 @@ export class Transformation {
    */
   static rotate(
     vertices: Vector3[],
-    angleX: Angle,
-    angleY: Angle,
-    angleZ: Angle,
+    angleX?: Angle,
+    angleY?: Angle,
+    angleZ?: Angle,
     origin: Vector3 = new Vector3(0, 0, 0)
   ): Vector3[] {
     return vertices.map(vertex => {
       // Translate to origin, rotate, translate back
       let rotated = vertex.subtract(origin);
-      rotated = rotateX(rotated, angleX);
-      rotated = rotateY(rotated, angleY);
-      rotated = rotateZ(rotated, angleZ);
+      if(angleX) rotated = rotateX(rotated, angleX);
+      if(angleY) rotated = rotateY(rotated, angleY);
+      if(angleZ) rotated = rotateZ(rotated, angleZ);
       return rotated.add(origin);
     });
   }

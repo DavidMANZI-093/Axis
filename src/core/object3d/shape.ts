@@ -35,13 +35,12 @@ export class Object3D {
         const halfBase = base / 2;
         const halfHeight = height / 2;
         return [
-            new Vector3(origin.x - halfBase, origin.y - halfHeight, origin.z),
-            new Vector3(origin.x + halfBase, origin.y - halfHeight, origin.z),
-            new Vector3(origin.x, origin.y - halfHeight, origin.z - halfBase),
-
-            new Vector3(origin.x - halfBase, origin.y + halfHeight, origin.z),
-            new Vector3(origin.x + halfBase, origin.y + halfHeight, origin.z),
-            new Vector3(origin.x, origin.y + halfHeight, origin.z - halfBase)
+            new Vector3(origin.x - halfBase, origin.y - halfHeight / 2, origin.z),
+            new Vector3(origin.x + halfBase, origin.y - halfHeight / 2, origin.z),
+            new Vector3(origin.x + halfBase, origin.y + halfHeight / 2, origin.z),
+            new Vector3(origin.x - halfBase, origin.y + halfHeight / 2, origin.z),
+            
+            new Vector3(origin.x, origin.y, origin.z - halfBase),
         ]
     }
 }

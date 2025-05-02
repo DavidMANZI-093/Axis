@@ -25,7 +25,7 @@ class Main {
   // Animation variables
   private _rotationX: number = 0;
   private _rotationY: number = 0;
-  private _rotationZ: number = 0;
+  private _rotationZ: number = 20; // Offets from 20
   private _currentShape: string = 'cube';
   private _vertices: Vector3[];
   
@@ -51,15 +51,15 @@ class Main {
   // Define prism faces (triangles)
   private _prismFaces: number[][] = [
     // Base triangle
-    [0, 1, 2],
-    // Top triangle
-    [3, 4, 5],
+    [0, 1, 2], [0, 2 ,3],
     // Side 1
-    [0, 3, 1], [1, 3, 4],
+    [0, 1, 4],
     // Side 2
-    [1, 4, 2], [2, 4, 5],
+    [1, 2, 4],
     // Side 3
-    [2, 5, 0], [0, 5, 3]
+    [2, 3, 4],
+    // Side 4
+    [3, 0, 4]
   ];
 
   /**
@@ -79,7 +79,7 @@ class Main {
     // Define available shapes
     this._shapes = {
       cube: () => this._object3D.createCube(new Vector3(0, 0, 0), Settings.OBJECT_SCALE),
-      prism: () => this._object3D.createPrism(new Vector3(0, 0, 0), Settings.OBJECT_SCALE, Settings.OBJECT_SCALE * 1.5)
+      prism: () => this._object3D.createPrism(new Vector3(0, 0, 0), Settings.OBJECT_SCALE + 4, Settings.OBJECT_SCALE + 4),
     };
     
     // Create the initial 3D object
@@ -196,9 +196,9 @@ class Main {
       this._renderFaces(translatedVertices, projectedVertices, faces);
       
       // Render info text
-      this._terminal.drawText(2, 2, `Shape: ${this._currentShape}`, 0);
-      this._terminal.drawText(2, 3, `FPS: ${this._timer.getCurrentFps().toFixed(1)}`, 0);
-      this._terminal.drawText(2, 4, `Rotation: X=${this._rotationX.toFixed(1)} Y=${this._rotationY.toFixed(1)} Z=${this._rotationZ.toFixed(1)}`, 0);
+      this._terminal.drawText(1, 1, `Shape: ${this._currentShape}`, 0);
+      this._terminal.drawText(1, 2, `FPS: ${this._timer.getCurrentFps().toFixed(1)}`, 0);
+      this._terminal.drawText(1, 3, `Rotation: X=${this._rotationX.toFixed(1)} Y=${this._rotationY.toFixed(1)} Z=${this._rotationZ.toFixed(1)}`, 0);
       
       // Render the frame
       this._terminal.render();
