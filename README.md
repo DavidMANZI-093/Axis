@@ -1,5 +1,7 @@
 # Project Axis
 
+![Logo](./axis.jpg)
+
 ## A Foreword
 
 As I begin building this project &mdash; for the first time pairing it with proper documentation and a blog &mdash; I also begin a new chapter of my journey: opening up to the world and sharing my humble experiences in the realm of computer science and programming. My hope is to grow through this process, and maybe, enjoy your precious company along the way.
