@@ -1,588 +1,255 @@
 # Project Axis
 
-## A foreword
+## A Foreword
 
-As I begin building this project &mdash; for the first time pairing it with proper documentation and a blog &mdash; I also begin a new chapter of my journey: opening up to the world and sharing my humble experiences in the realm of computer science and programming. My hope is to grow through this process, and maybe, just maybe, enjoy your precious company along the way.
+As I begin building this project &mdash; for the first time pairing it with proper documentation and a blog &mdash; I also begin a new chapter of my journey: opening up to the world and sharing my humble experiences in the realm of computer science and programming. My hope is to grow through this process, and maybe, enjoy your precious company along the way.
 
 Thank you!
 
 ## Axis
 
-This project is inspired by the well-known YouTuber *@Joma Tech*, who &mdash; in what I assume was parody comedy &mdash; showcased a spinning 3D donut model rendered right in the terminal. That quirky little idea got stuck in my head, and now I want to try building a simple 3D renderer using JavaScript (layered with TypeScript for some added convenience). I’ll experiment with different 3D objects and do my best to recreate Joma’s fun idea. Let’s jump right into it!
+Have you ever seen those cool animations of spinning 3D objects in the terminal? Well, I certainly have! This project was inspired by the well-known YouTuber *@Joma Tech*, who &mdash; in what I assume was parody comedy &mdash; showcased a spinning 3D donut model rendered right in the terminal. That seemingly little idea got stuck in my mind, and I thought, "Hey, why not build something like this myself?"
+
+So here we are! We are going to build a simple 3D renderer using JavaScript (layered with TypeScript for some added convenience). We'll experiment with different 3D objects and do our best to recreate Joma's fun idea. Let's jump right into this adventure together!
 
 ## Genesis
 
-In this section, I’d like to start with a few key details to ensure clarity and consistency as we move forward. We’ll build a conceptual model to help us make sense of the project, sketch out a roadmap to align everything in perfect, and lay out the project directory structure.
+Before we dive into the code, let's start with a few key details to ensure we're on the same page. We'll build a conceptual model to help us make sense of the project, sketch out a roadmap to keep everything aligned, and lay out the project directory structure so you can follow along.
 
-And for the record &mdash; we’re about to explore some really cool math concepts in this one!
+And just between us &mdash; we're about to explore some really cool math concepts in this one! Don't worry if math isn't your thing; I'll walk you through each concept step by step, keeping things approachable and fun.
 
 ## The Axis Concept
 
-The idea behind this project is intentionally minimal. We’re working with vectors in 3D space, applying some cool math operations like rotation to bring the animation to life, and projection to present everything on a 2D surface &mdash; in our case, the terminal. To make it feel more realistic, we’ll also include surface normalization and light vectors, so we can create some nice shading effects and depth.
+The idea behind this project is intentionally minimal. We're working with vectors in 3D space, applying some cool math operations like rotation to bring the animation to life, and using projection to present everything on a 2D surface &mdash; in our case, the terminal. To make it feel more realistic, we'll also include surface normalization and light vectors, creating nice shading effects and depth.
 
-After diving into the fascinating math behind it all, we’ll explore how each piece is transformed into clean, object-oriented code &mdash; where all the components come together to produce the final effect. Now, let’s step into the world of 3D vector space.
+After we dive into the fascinating math behind it all, We'll see how each piece transforms into clean, object-oriented code &mdash; where all the components come together to produce the final effect. Ready to step into the world of 3D vector space? Let's go!
 
 ### The 3D and 2D Vector Space
 
-Let’s consider a cube. In mathematics, any 3D object like a cube is represented by a set of points called vertices. When these points are connected, we form vectors, or edges, which define the shape of the object. In 3D space specifically, each vertex is defined by coordinates $(x,y,z)$, where:
+Let's start by thinking about a cube. Imagine you're holding one in your hand. In mathematics, this 3D object (and any 3D object, really) is represented by a set of points called vertices. When these points are connected, they form vectors, or edges, which define the shape. So when we talk about 3D space, each vertex has three coordinates: $(x,y,z)$.
 
-- $x$ represents left and right,
-- $y$ represents up and down,
-- $z$ represents depth &mdash; in and out of the screen (well... if only our screen could let things pop out for real!).
+What do these coordinates mean? Well:
+
+- $x$ tells us how far left or right the point is
+- $y$ tells us how far up or down it is
+- $z$ represents depth — how far in or out of the screen (Good thing our screens can't really let things pop out, can they?)
 
 <figure style='display: flex; flex-direction: column; margin: 2rem auto; gap: 1rem'>
     <img src='https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Coord_planes_color.svg/800px-Coord_planes_color.svg.png' alt='A representation of a three-dimensional Cartesian coordinate system' style='display: block; margin: 0 auto; height: 16rem; background-color: #fff; border-radius: 0.5rem'>
     <figcaption style='font-style: italic; margin: 0 auto; font-size: 85%'>A representation of a three-dimensional Cartesian coordinate system</figcaption>
 </figure>
 
-Now, in 2D space, things are a bit simpler &mdash; and more practical for our terminal-based project. Here, we only work with (x,y) coordinates. That means we lose the depth component, which is where projection comes in... but let’s not get ahead of ourselves just yet.
+Now, when it comes to 2D space, things get a bit simpler — and that's what we'll need for our terminal-based project. Here, we only work with $(x,y)$ coordinates. We lose the depth component, which might seem limiting, but don't worry! That's where projection comes in... but let's not get ahead of ourselves. We'll get to that part soon.
 
 <figure style='display: flex; flex-direction: column; margin: 2rem auto; gap: 1rem'>
     <img src='https://upload.wikimedia.org/wikipedia/commons/thumb/0/0e/Cartesian-coordinate-system.svg/250px-Cartesian-coordinate-system.svg.png' alt='Illustration of a Cartesian coordinate plane. Four points are marked and labeled with their coordinates: (2, 3) in green, (−3, 1) in red, (−1.5, −2.5) in blue, and the origin (0, 0) in purple.' style='display: block; margin: 0 auto; height: 16rem; background-color: #fff; border-radius: 0.5rem'>
-    <figcaption style='font-style: italic; margin: 0 auto; font-size: 85%'>Illustration of a two-dimension Cartesian coordinate system. Four points are marked and labeled with their coordinates: (2, 3) in green, (−3, 1) in red, (−1.5, −2.5) in blue, and the origin (0, 0) in purple.</figcaption>
+    <figcaption style='font-style: italic; margin: 0 auto; font-size: 85%'>Illustration of a two-dimensional Cartesian coordinate system. Four points are marked and labeled with their coordinates: (2, 3) in green, (−3, 1) in red, (−1.5, −2.5) in blue, and the origin (0, 0) in purple.</figcaption>
 </figure>
+
+In our project, I've implemented these coordinate systems in the `Vector3` and `Vector2` classes (you can find them in `src/core/math/vector.ts`). These classes form the foundation of all our spatial operations. Think of them as the building blocks that will help us create and manipulate our 3D objects before we render them in the terminal.
 
 ### Rotation in 3D Space
 
-Rotation is a key mathematical concept that brings our 3D cube to life by animating it frame by frame. It allows us to turn or spin our 3D object along any axis &mdash; and that’s exactly what makes it feel dynamic.
+Now comes the fun part — bringing our 3D cube to life! Rotation is the key mathematical concept that will animate our objects frame by frame. It's what allows us to turn or spin objects along any axis, making them feel dynamic and alive.
 
-To rotate points in 3D space, we apply trigonometric functions like $sine()$ and $cosine()$ to their coordinates. Each rotation is done around a specific axis &mdash; X, Y, or Z &mdash; and for each axis, we have a specific formula that transforms a point's position.
+So how do we rotate points in 3D space? We'll use some trigonometric functions like $sine()$ and $cosine()$ to transform coordinates. Don't worry if that sounds complex — We'll break it down.
 
-- Rotating around the X-axis affects the Y and Z coordinates:
+When we rotate an object, we need to specify an axis to rotate around — X, Y, or Z. For each axis, we have a specific formula that transforms the point's position:
+
+- When we rotate around the X-axis, we're affecting the Y and Z coordinates:
 
 $$
 \begin{bmatrix} x' \\ y' \\ z' \end{bmatrix} = \begin{bmatrix} x \\ y.\cos(\theta) - z.\sin(\theta) \\ y.\sin(\theta) + z.\cos(\theta) \end{bmatrix}
 $$
 
-- Rotating around the Y-axis affects the X and Z coordinates:
+- When we rotate around the Y-axis, we're affecting the X and Z coordinates:
 
 $$
 \begin{bmatrix} x' \\ y' \\ z' \end{bmatrix} = \begin{bmatrix} x.\cos(\theta) - z.\sin(\theta) \\ y \\ -x.\sin(\theta) + z.\cos(\theta) \end{bmatrix}
 $$
 
-- Rotating around the Z-axis affects the X and Y coordinates:
+- And when we rotate around the Z-axis, we're affecting the X and Y coordinates:
 
 $$
 \begin{bmatrix} x' \\ y' \\ z' \end{bmatrix} = \begin{bmatrix} x.\cos(\theta) - y.\sin(\theta) \\ x.\sin(\theta) + y.\cos(\theta) \\ z \end{bmatrix}
 $$
 
-We can apply these rotations individually or combine them by applying them one after another. That’s how we’ll simulate smooth spinning &mdash; just to keep rotating slightly over time!
+Don't let these formulas intimidate you! The beautiful thing is that we can apply these rotations individually or combine them by applying them one after another. That's how we'll create smooth spinning animations — we'll just keep rotating slightly over time!
 
-We’ll later turn these into reusable code in our object-oriented setup.
+In the code, I've implemented these rotation formulas in `src/core/math/rotation.ts`. I've created functions called `rotateX()`, `rotateY()`, and `rotateZ()` that handle these calculations, plus an `Angle` class to convert between degrees and radians. These will be the workhorses that keep our objects spinning smoothly as we watch them in the terminal.
+
+Ready to see how we'll project these 3D objects onto our 2D screen? Let's continue our journey!
 
 ## Projection
 
-In 3D graphics, projection is the process of translating 3D points onto a 2D plane &mdash; sort of like casting the shadow of a 3D shape onto a flat surface. While our cube lives and rotates freely in 3D space, when it's time to render it in the terminal (which is 2D), we use mathematics to flatten those 3D coordinates into something drawable.
+So we've got our 3D objects and we know how to rotate them — awesome! But there's a small problem: our terminal is flat (2D), and our objects are three-dimensional. How do we bridge that gap? That's where projection comes in.
 
-This process lets us simulate depth and movement even though the terminal has no concept of real 3D space.
+Projection is like taking a 3D object and casting its shadow onto a flat surface. It's the process of translating 3D points onto a 2D plane. While our cube happily spins in its 3D world, when it's time to show it in the terminal, we need mathematics to flatten those coordinates into something we can draw.
 
-There are two main types of projection:
+This projection process is what lets us simulate depth and movement on a flat screen. It's pretty magical when you think about it!
 
-- **Perspective projection**: This approach mimics how our eyes work: objects farther away appear smaller. It introduces realistic depth by scaling based on the z coordinate (depth). However, it's not always practical in low-resolution environments like a terminal &mdash; where precision is limited by character size.
+There are two main types of projection we could use:
+
+- **Perspective projection**: This one works like our eyes do — objects farther away appear smaller. It creates that realistic depth by scaling based on how far away things are (the z coordinate). It looks great, but it's not always practical in a terminal where we're limited by character size and grid spacing.
 
 <figure style='display: flex; flex-direction: column; margin: 2rem 0; gap: 1rem'>
     <img src='https://player.slideplayer.com/13/3916031/data/images/img14.jpg' alt='Three-point perspective projection' style='display: block; margin: 0 auto; height: 16rem; background-color: #fff; border-radius: 0.5rem'>
     <figcaption style='font-style: italic; margin: 0 auto; font-size: 85%'>Illustration of a three-point perspective projection.</figcaption>
 </figure>
 
-- **Orthographic projection**: In orthographic projection, objects maintain their size regardless of depth. It ignores the z-axis for scaling, keeping things simple and accurate. Though it's less “realistic,” it's perfect for clean, readable representations, especially in text-based or schematic visualizations.
+- **Orthographic projection**: With this approach, objects maintain their size regardless of depth. It ignores the z-axis for scaling, keeping things simple and accurate. Though it's less "realistic" than perspective, it's perfect for clean, readable representations, especially in text-based environments like our terminal.
 
 <figure style='display: flex; flex-direction: column; margin: 2rem 0; gap: 1rem'>
     <img src='https://upload.wikimedia.org/wikipedia/commons/thumb/4/48/Axonometric_projection.svg/800px-Axonometric_projection.svg.png' alt='Axonometric projection.' style='display: block; margin: 0 auto; height: 16rem; background-color: #fff; border-radius: 0.5rem'>
     <figcaption style='font-style: italic; margin: 0 auto; font-size: 85%'>Illustration of a three-point orthographic projection.</figcaption>
 </figure>
 
-We’ll be using orthographic projection in this project, because it provides a stable and clear representation of our cube that suits terminal rendering just right.
+For our project, I've chosen to use orthographic projection because it provides a stable and clear representation of our 3D objects that works well in the terminal environment.
 
-### Math Behind Orthographic Projection
+### The Math Behind Orthographic Projection
 
-As we discussed above, in orthographic projection, the size of the object &mdash; a cube, in our case &mdash; remains constant no matter how far it moves from the viewer. It’s as if we’re observing the cube from an infinitely far distance, where our line of sight becomes perfectly parallel. Because of this, parallel lines never converge, and there’s no illusion of depth caused by scaling. This allows us to represent the cube clearly and consistently, which is especially helpful when working in environments like the terminal where every pixel (or character) counts!
+Let me explain how orthographic projection works in simple terms. Imagine you're standing infinitely far away from the cube, looking at it with a super-powerful telescope. At this distance, all your sight lines become perfectly parallel, and the size of the cube doesn't change with depth.
 
-Given a 3D point $(x,y,z)$, its 2D screen projection is:
+Because of this, orthographic projection gives us a stable view where parallel lines stay parallel (they never converge), and there's no distortion from perspective. It's perfect for our terminal where each character is the same size!
 
-$x' = x.scale$ and $y' = y.scale$ or $P' = (x.scale,y.scale)$
+Mathematically, it's quite simple. Given a 3D point $(x,y,z)$, its 2D screen projection becomes:
 
-Simple scaling might be applied to $x$ and $y$.
+$x' = x \cdot scale$ and $y' = y \cdot scale$
 
-$z$ is ignored completely in the projection (intesrestingly, it can still be used for sorting, like in hidden surface removal or layering).
+Or put more simply: $P' = (x \cdot scale, y \cdot scale)$
+
+We apply some scaling to $x$ and $y$ to adjust the size, but we completely ignore $z$ in the projection formula. (Don't worry though, we'll still use $z$ for other things like determining which parts of the object are in front of others.)
+
+I've implemented this projection in `src/core/math/projection.ts` with the `Projection` class. It takes care of converting our 3D coordinates to 2D screen positions, considering the terminal's dimensions and applying the right scaling to center everything nicely on screen.
 
 ## Lighting
 
-In our real world, what we see is just light bouncing off surfaces into our eyes. In a 3D space, we can simulate lighting by making surfaces appear:
+Have you ever noticed how in the real world, we see objects because light bounces off them into our eyes? Well, in our 3D terminal world, we need to simulate that same effect to make our shapes look solid and three-dimensional. Let's talk about how we'll bring that extra dimension to our flat terminal screen using lighting!
 
-- **Bright** if they're facing the light,
+We'll simulate lighting by making surfaces appear:
 
-- **Dim** if they're turned away,
+- **Bright** when they're facing toward our light source
+- **Dim** when they're turned away
+- **Dark** when they're in shadow (though we won't be simulating complex shadows in this project)
 
-- And **dark** if they're in shadow (though we're not simulating shadows here).
+We'll be modeling this using vectors and dot products — but don't worry if that sounds intimidating. We'll break it down.
 
-We'll be modeling this using vectors and dot products, following a classic and elegant mathematical approach.
+### Lambert's Cosine Law — The Math of Diffuse Lighting
 
-### Lambert's Cosine Law &mdash; The Math of Diffuse Lighting
+There's this fascinating physics principle from way back in 1760 that we'll use. It was discovered by Johann Heinrich Lambert and states:
 
-This is a physics classic, and it tells us that:
+> *"The amount of light hitting a surface is proportional to the cosine of the angle between the light direction and the surface normal." — **Johann Heinrich Lambert, 1760, Photomotria***
 
->*"The amount of light hitting a surface is proportional to the cosine of the angle between the light direction and the surface normal." &mdash; **Johann Heinrich Lambert, 1760, Photomotria***
+In plain English: the more directly a surface faces a light source, the brighter it appears. If it's at an angle, it gets less light. If it's facing away completely, it gets no direct light at all.
 
-Mathematically:
+Mathematically, we can express this as:
 
 $$
 I_{\text{diffuse}} = \max(0, \vec{N} \cdot \vec{L})
 $$
 
-Let's unpack this aligning to our own terms:
+Let's break it down in simpler terms:
 
-- Let $\vec{N}$ be the normal vector of a surface on our cube (a unit vector).
-- Let $\vec{L}$ be the light direction vector, pointing from the surface point but also normalized.
-- Let's also introduce constant $A$ for **ambient light**&mdash;a small amount of background light (typically between 0 and 1) that keeps the surface from going completely dark when it faces away from the light.
+- $\vec{N}$ is the "normal vector" of a surface (imagine an arrow sticking straight out from the surface)
+- $\vec{L}$ is the direction of the light (pointing from the surface toward the light)
+- The dot product ($\vec{N} \cdot \vec{L}$) essentially tells us how aligned these two directions are
+- The $\max(0,...)$ part ensures we don't get negative light values when a surface faces away from the light
 
-So, the total light intensity $I_{\text{diffuse}}$ at a given point on our cube is:
+But I'm going to add one more thing: **ambient light**. This is a small amount of background illumination (let's call it $A$) that ensures even surfaces facing away from the light aren't completely black. It's like the soft, indirect light that bounces around a room.
+
+So our complete lighting formula becomes:
 
 $$
 I_{\text{diffuse}} = \max(0, \vec{N} \cdot \vec{L}) + A
 $$
 
-Here's what's going on:
+Here's what's happening:
 
-- The dot product $\vec{N}.\vec{L} = \cos(\theta)$, where $\theta$ is the gievn angle between the surface normal and the light direction.
+- If the surface directly faces the light source ($\theta = 0°$), the cosine = 1, giving maximum brightness
+- If it's perpendicular to the light ($\theta = 90°$), the cosine = 0, giving only ambient light
+- If it faces away ($\theta = 180°$), the cosine = -1, but we clamp it to zero with the $\max()$ function, then add ambient light
 
-- If the surface faces directly toward the light, $\theta = 0^\circ$, so $\cos(\theta) = 1$ &rightarrow; maximum brightness.
-
-- If it faces away, $\theta = 180^\circ$, so $\cos(\theta) = -1$ &rightarrow; darkness (but we clamp that to zero using the $max()$ function).
-
-- The ambient light $A$ makes sure that even those unshaded areas still get a soft touch of light.
-
-To make sure the final intensity doesn’t overshoot, we clamp the total value between 0 and 1:
+To keep everything nicely bounded, I'll clamp the final intensity between 0 and 1:
 
 $$
-I_\text{diffuse} = \min(1,\max(0,(\vec{N}).(\vec{L})+A))
+I_\text{diffuse} = \min(1,\max(0,(\vec{N}) \cdot (\vec{L})+A))
 $$
 
-And there we have it: a beautifully simple yet realistic lighting model driven by pure angles. It’s the math behind flat shading.
+I've implemented this lighting model in `src/core/renderer/shading.ts` through the `Shading` class. It calculates those surface normals using the cross product of edge vectors and determines light intensity based on the dot product between the normal and light direction vectors.
+
+Isn't it amazing how a few simple math operations can create the illusion of depth on a flat screen? Now let's move on to how we'll actually render this on our terminal!
 
 ## Terminal Rendering
 
-The terminal is our canvas for this 3D rendering project. Unlike traditional graphics rendering that uses pixels, we'll be working with characters in a grid. This unique constraint requires us to think differently about how we represent 3D objects.
+Now we've covered the fundamental math, but there's still the question of how we'll actually display our 3D object on a simple text terminal. Let's see how we bridge that gap!
 
-### Character Grid and Frame Buffer
+Terminal rendering is where the magic happens. We're going from math and coordinates to something you can actually see. I've built a rendering system that uses ASCII characters to create the illusion of a 3D object on our plain text terminal.
 
-Think of the terminal as a grid of characters, much like a pixel grid in traditional graphics. Each cell in this grid can hold one character. In our case, this grid is defined by:
+### ASCII Art as a Visual Medium
 
-- **Width**: Number of characters that fit horizontally
-- **Height**: Number of lines that fit vertically
+If you've been around computers for a while, you might remember ASCII art — that creative way of making pictures using just text characters. We're doing something similar, but with a modern twist: we're using specific characters to represent different light intensities.
 
-The frame buffer is a crucial concept in terminal rendering. Instead of directly writing to the terminal, we'll maintain a buffer that represents the entire screen. This buffer will allow us to:
-
-1. Update only the parts of the screen that have changed
-2. Maintain proper depth ordering (closer objects appear in front &mdash; more on this below)
-3. Prevent flickering by updating the entire screen at once
-
-### Depth Buffering
-
-In 3D rendering, depth buffering is crucial for maintaining proper object ordering. In our terminal renderer, we implement this through two parallel buffers:
-
-- **Frame Buffer**: Stores the characters to be displayed
-- **Depth Buffer**: Stores the z-coordinate (depth) for each position
-
-For each position (x,y) in the terminal grid:
-
-1. When rendering a new object:
-   - We calculate its z-coordinate after transf ormation
-   - We compare with the stored z-value in the depth buffer
-   - If **new z** < **stored z** (closer object), we update both buffers:
-     - Frame buffer: new character
-     - Depth buffer: new z-value
-   - If **new z** > **stored z** (farther object), we skip the update
-
-This ensures that:
-
-- Closer objects always appear in front
-- Surfaces don't intersect incorrectly
-- The final image maintains proper perspective
-
-### Character Set and Density
-
-In traditional graphics, we use pixels of different colors to create images. In the terminal, we'll be using characters of different shapes and densities. The ASCII character set provides a range of characters that can be used to create varying levels of darkness and patterns:
-
-- Light characters: `.`, `,`, `:`
-- Medium characters: `o`, `*`, `+`
-- Dark characters: `#`, `@`, `■`
-
-The choice of character affects how the final image appears. Darker characters create more solid shapes, while lighter characters create softer gradients.
-
-### Math Behind Terminal Rendering
-
-While we're working with characters instead of pixels, many of the same mathematical concepts apply:
-
-- Vector transformations for camera movement
-- Matrix operations for efficient rendering
-- Projection calculations to map 3D points to 2D grid positions
-- Depth calculations for proper object ordering
-
-The main difference is that instead of drawing pixels, we're placing characters in specific grid positions based on the calculated 3D transformations.
-
-## Axis Implementation
-
-Let’s dive into how our mathematical concepts are transformed into code. The Axis project is organized into several key components, each playing a crucial role in our 3D rendering system.
-
-### Project Structure
-
-    /src
-    ├── core/
-    │    ├── math/
-    │    │    ├── rotation.ts
-    │    │    ├── projection.ts
-    │    │    └── vector.ts
-    │    ├── object3d/
-    │    │    ├── shape.ts
-    │    │    └── transformation.ts
-    │    └── renderer/
-    │         ├── terminal.ts
-    │         └── shading.ts
-    │
-    ├── app/
-    │    ├── main.ts
-    │    └── settings.ts
-    │
-    └── utils/
-        ├── timer.ts
-        └── logger.ts
-
-### Core Components
-
-The core directory is the heart of our system, divided into three main parts:
-
-1. **Math Core**
-   - Handles all mathematical operations and transformations
-   - Provides the foundation for 3D space calculations
-   - Implements vector operations and transformations
-
-2. **3D Objects**
-   - Defines 3D shapes and their properties
-   - Handles object transformations and animations
-   - Manages object relationships and hierarchies
-
-3. **Renderer**
-   - Implements terminal-based rendering
-   - Handles shading and lighting calculations
-   - Manages frame buffer and depth buffer
-
-### Supporting Components
-
-1. **Application Layer**
-   - Main application logic and state management
-   - Configuration and settings
-   - Input handling and user interaction
-
-2. **Utilities**
-   - Timer for animation control
-   - Logger for debugging and monitoring
-
-Each component is designed to be modular and reusable, making the codebase easy to maintain and extend.
-
-### Math Core Implementation
-
-Let’s dive into the heart of our 3D rendering system: the mathematical core. This is where all the magic happens, transforming our abstract mathematical concepts into concrete code.
-
-#### Vectors
-
-The `vector.ts` file is our foundation, implementing both 3D and 2D vector operations. Let's dive into the mathematical concepts and their implementation:
-
-##### Vector3 Class
-
-The Vector3 class represents points in 3D space. Mathematically, a 3D vector is defined by three coordinates:
-
-$$
-\vec{v} = (x, y, z)
-$$
-
-The implementation follows this mathematical definition:
+I've chosen a set of ASCII characters that progress from dark to light:
 
 ```typescript
-export class Vector3 {
-    constructor(public x: number, public y: number, public z: number) {}
-}
+" .,:-=+*#%@"
 ```
 
-##### Vector Operations
+Can you see how they get progressively "denser"? A space is nearly invisible (darkest), while "@" appears quite bold (brightest). This gives us a visual gradient we can use to represent different lighting levels on our 3D object.
 
-The class implements basic vector operations that form the foundation of our 3D transformations:
+### The Buffer System
 
-1. **Vector Addition**
-   - Mathematically: $\vec{a} + \vec{b} = (a_x + b_x, a_y + b_y, a_z + b_z)$
-   - Implementation:
-   ```typescript
-   add(v: Vector3): Vector3 {
-       return new Vector3(this.x + v.x, this.y + v.y, this.z + v.z);
-   }
-   ```
+To make rendering work smoothly, I've implemented two important buffers:
 
-2. **Vector Subtraction**
-   - Mathematically: $\vec{a} - \vec{b} = (a_x - b_x, a_y - b_y, a_z - b_z)$
-   - Implementation:
-   ```typescript
-   subtract(v: Vector3): Vector3 {
-       return new Vector3(this.x - v.x, this.y - v.y, this.z - v.z);
-   }
-   ```
+- **Character Buffer**: This holds the actual ASCII characters we'll display
+- **Depth Buffer**: This tracks how "deep" each pixel is (its z-coordinate)
 
-3. **Scalar Multiplication**
-   - Mathematically: $k\vec{v} = (kx, ky, kz)$
-   - Implementation:
-   ```typescript
-   multiply(Scalar: number): Vector3 {
-       return new Vector3(this.x * Scalar, this.y * Scalar, this.z * Scalar);
-   }
-   ```
+The depth buffer is crucial because it helps us solve the "painter's problem" — determining which parts of an object should be visible when some parts are behind others. For each pixel position, we only draw a new point if it's closer to the viewer than what's already there.
 
-##### Vector2 Class
+Here's a simplified look at how this works:
 
-The Vector2 class handles 2D operations, crucial for our terminal rendering:
+1. Initialize both buffers with empty spaces and "infinity" depth values
+2. For each triangle in our 3D model:
+   - Project its vertices to 2D screen coordinates
+   - Calculate its surface normal and lighting intensity
+   - Fill in the projected triangle area with appropriate ASCII characters
+   - For each position, check if this point is closer than what's already in the buffer
+   - If it is closer, update both the character and depth buffers
 
-```typescript
-export class Vector2 {
-    constructor(public x: number, public y: number) {}
-}
-```
+3. Once all triangles are processed, display the character buffer to the terminal
 
-It implements the same operations as Vector3 but for 2D space:
+The implementation is in `src/core/renderer/terminal.ts` where I've built the `Terminal` class to handle all these operations. It manages the buffers, provides methods for drawing points and triangles, and keeps track of depth to ensure proper rendering.
 
-1. **2D Vector Addition**
-   - Mathematically: $\vec{a} + \vec{b} = (a_x + b_x, a_y + b_y)$
-   - Implementation:
-   ```typescript
-   add(v: Vector2): Vector2 {
-       return new Vector2(this.x + v.x, this.y + v.y);
-   }
-   ```
+### Handling Terminal Constraints
 
-2. **2D Vector Subtraction**
-   - Mathematically: $\vec{a} - \vec{b} = (a_x - b_x, a_y - b_y)$
-   - Implementation:
-   ```typescript
-   subtract(v: Vector2): Vector2 {
-       return new Vector2(this.x - v.x, this.y - v.y);
-   }
-   ```
+Working with a terminal introduces some unique challenges:
 
-##### Key Features
+- Terminal "pixels" (characters) aren't square — they're taller than they are wide
+- Terminal resolution is much lower than a graphical display
+- We can only use text characters, not actual pixels or colors (though some terminals do support color!)
 
-- **Immutability**: Each operation returns a new instance, ensuring predictable behavior
-- **Type Safety**: TypeScript's type system ensures correct vector operations
-- **Clean Separation**: Vector3 for 3D space, Vector2 for 2D projections
-- **Functional Approach**: Pure functions that don't modify state
+To address these challenges, I've built scaling and offsetting into our projection system to account for the non-square aspect ratio of terminal characters. This prevents our objects from looking squished or distorted.
 
-These vector operations form the foundation of all our 3D transformations, from rotations to projections. The immutability pattern helps maintain consistency in our animation loops and transformations.
+### Refreshing the Display
 
-#### Rotation Implementation
+Once we've filled our buffers and are ready to show a new frame, we need to update the terminal display. This process involves:
 
-In `rotation.ts`, we bring our rotation concepts to life with a clean, functional approach. Let's explore the mathematical concepts and their implementation:
+1. Clearing the previous frame
+2. Converting our 2D character buffer into a string representation
+3. Writing that string to the terminal
+4. Positioning the cursor back at the top-left for the next frame
 
-##### Angle Representation
+This creates the illusion of animation as we repeatedly update the display with each new frame. The rendering loop in the main application handles this process, calculating new positions and orientations for each frame before rendering.
 
-The Angle class handles angle representation and conversion:
+## 3D Objects Implementation
 
-```typescript
-export class Angle {
-    constructor(public degrees: number) {}
-    
-    toRadians(): number {
-        return (this.degrees * Math.PI) / 180;
-    }
-}
-```
+We've covered the math and rendering, but how do we actually create and manage 3D objects in our code? Let's take a look at the implementation details!
 
-This class ensures consistent angle handling throughout the system, converting degrees to radians for trigonometric calculations.
+At the core of our 3D system is a simple but flexible approach that separates the creation of vertices from the definition of faces. This separation of concerns gives us a clean and maintainable design.
 
-##### Axis-Specific Rotations
+### The Object3D Class
 
-The implementation provides three main rotation functions, each corresponding to an axis:
-
-1. **X-Axis Rotation**
-   - Rotation matrix:
-   $$
-   R_x(\theta) = 
-   \begin{pmatrix}
-   1 & 0 & 0 \\
-   0 & \cos\theta & -\sin\theta \\
-   0 & \sin\theta & \cos\theta
-   \end{pmatrix}
-   $$
-   - Implementation:
-   ```typescript
-   export function rotateX(vector: Vector3, angle: Angle): Vector3 {
-       const rad = angle.toRadians();
-       const cos = Math.cos(rad);
-       const sin = Math.sin(rad);
-       return new Vector3(
-           vector.x,
-           vector.y * cos - vector.z * sin,
-           vector.y * sin + vector.z * cos
-       )
-   }
-   ```
-
-2. **Y-Axis Rotation**
-   - Rotation matrix:
-   $$
-   R_y(\theta) = 
-   \begin{pmatrix}
-   \cos\theta & 0 & \sin\theta \\
-   0 & 1 & 0 \\
-   -\sin\theta & 0 & \cos\theta
-   \end{pmatrix}
-   $$
-   - Implementation:
-   ```typescript
-   export function rotateY(vector: Vector3, angle: Angle): Vector3 {
-       const rad = angle.toRadians();
-       const cos = Math.cos(rad);
-       const sin = Math.sin(rad);
-       return new Vector3(
-           vector.x * cos + vector.z * sin,
-           vector.y,
-           -vector.x * sin + vector.z * cos
-       )
-   }
-   ```
-
-3. **Z-Axis Rotation**
-   - Rotation matrix:
-   $$
-   R_z(\theta) = 
-   \begin{pmatrix}
-   \cos\theta & -\sin\theta & 0 \\
-   \sin\theta & \cos\theta & 0 \\
-   0 & 0 & 1
-   \end{pmatrix}
-   $$
-   - Implementation:
-   ```typescript
-   export function rotateZ(vector: Vector3, angle: Angle): Vector3 {
-       const rad = angle.toRadians();
-       const cos = Math.cos(rad);
-       const sin = Math.sin(rad);
-       return new Vector3(
-           vector.x * cos - vector.y * sin,
-           vector.x * sin + vector.y * cos,
-           vector.z
-       )
-   }
-   ```
-
-##### Key Features
-
-- **Immutability**: Each rotation returns a new Vector3 instance
-- **Trigonometric Precision**: Uses Math.cos and Math.sin for accurate rotations
-- **Axis Separation**: Clear separation of concerns for each axis
-- **Memory Efficiency**: Reuses calculations (cos and sin) for performance
-- **Type Safety**: Strong TypeScript typing ensures correct usage
-
-The rotation implementation follows the mathematical principles of rotation matrices while maintaining a clean, functional approach. Each axis rotation is independent, allowing for easy combination of rotations around multiple axes.
-
-#### Projection Implementation
-
-The `projection.ts` file handles our 2D-to-3D transformations. Let's explore the mathematical concepts and their implementation:
-
-##### Orthographic Projection
-
-Orthographic projection transforms 3D coordinates into 2D screen coordinates while maintaining consistent scaling. Mathematically, it's defined as:
-
-$$
-\begin{pmatrix}
-x' \\
-y' \\
-\end{pmatrix}
-=
-\begin{pmatrix}
-x \cdot scale + centerX \\
--y \cdot scale + centerY \\
-\end{pmatrix}
-$$
-
-The implementation follows this mathematical model:
-
-```typescript
-export class Projection {
-    constructor(
-        public _screenWidth: number = process.stdout.columns,
-        public _screenHeight: number = process.stdout.rows,
-        public _scale: number = 1,
-        public _zOffset?: number
-    ) {}
-}
-```
-
-##### Projection Process
-
-The projection process involves several key steps:
-
-1. **Center Calculation**
-   - `CenterX = screenWidth / 2`
-   - `CenterY = screenHeight / 2`
-   
-2. **Coordinate Transformation**
-
-   ```typescript
-   project3Dto2D(v: Array<Vector3>): Array<Vector2> {
-       const centerX = this._screenWidth / 2;
-       const centerY = this._screenHeight / 2;
-
-       const projected: Array<Vector2> = [];
-       for (const vector of v) {
-           const x = centerX + vector.x * this._scale;
-           const y = centerY - vector.y * this._scale;
-           projected.push(new Vector2(x, y));
-       }
-       return projected;
-   }
-   ```
-
-##### Key Features
-
-- **Orthographic Projection**: Maintains consistent scaling regardless of depth
-- **Y-Axis Inversion**: Adjusts for terminal coordinate system (top-left origin)
-- **Screen Centering**: Automatically centers objects on the screen
-- **Scaling Control**: Allows for size adjustment through scale parameter
-- **Depth Sorting**: Maintains depth information for proper object ordering
-
-The projection implementation is crucial for our terminal-based renderer as it:
-- Transforms 3D coordinates into terminal grid positions
-- Maintains proper proportions through consistent scaling
-- Handles terminal-specific coordinate systems
-- Preserves depth information for proper rendering order
-
-### 3D Objects Implementation
-
-Let's dive into how we create and manage 3D objects in our system. This is where we define the shapes that will be transformed and rendered.
-
-#### Shape Creation
-
-The Object3D class provides methods for creating various 3D objects:
-
-##### Cube Creation
-
-A cube is defined by its origin and scale. Mathematically, each vertex is calculated relative to the cube's center and scale:
-
-$$
-\begin{aligned}
-V_1 &= (x - s/2, y - s/2, z - s/2) \\
-V_2 &= (x + s/2, y - s/2, z - s/2) \\
-V_3 &= (x - s/2, y + s/2, z - s/2) \\
-V_4 &= (x + s/2, y + s/2, z - s/2) \\
-V_5 &= (x - s/2, y - s/2, z + s/2) \\
-V_6 &= (x + s/2, y - s/2, z + s/2) \\
-V_7 &= (x - s/2, y + s/2, z + s/2) \\
-V_8 &= (x + s/2, y + s/2, z + s/2)
-\end{aligned}
-$$
-
-Where:
-- $x, y, z$ are the coordinates of the cube's center
-- $s$ is the scale (side length) of the cube
-- Each vertex is offset from the center by $s/2$ in each dimension
-
-The implementation follows this mathematical definition:
+The `Object3D` class is responsible for creating the fundamental 3D shapes in our system. Unlike more complex graphics engines, I've kept this class intentionally simple and focused:
 
 ```typescript
 export class Object3D {
@@ -591,606 +258,210 @@ export class Object3D {
         return [
             new Vector3(origin.x - halfScale, origin.y - halfScale, origin.z - halfScale),
             new Vector3(origin.x + halfScale, origin.y - halfScale, origin.z - halfScale),
-            new Vector3(origin.x - halfScale, origin.y + halfScale, origin.z - halfScale),
-            new Vector3(origin.x + halfScale, origin.y + halfScale, origin.z - halfScale),
-            new Vector3(origin.x - halfScale, origin.y - halfScale, origin.z + halfScale),
-            new Vector3(origin.x + halfScale, origin.y - halfScale, origin.z + halfScale),
-            new Vector3(origin.x - halfScale, origin.y + halfScale, origin.z + halfScale),
-            new Vector3(origin.x + halfScale, origin.y + halfScale, origin.z + halfScale),
+            // ... more vertices
         ];
     }
-}
-```
-
-##### Prism Creation
-
-A prism is defined by its base and height. Mathematically, it's constructed using a combination of rectangular faces:
-
-$$
-\begin{aligned}
-V_1 &= (x - b/2, y - h/2, z) \\
-V_2 &= (x + b/2, y - h/2, z) \\
-V_3 &= (x + b/2, y + h/2, z) \\
-V_4 &= (x - b/2, y + h/2, z) \\
-V_5 &= (x, y, z - b/2)
-\end{aligned}
-$$
-
-The implementation follows this mathematical definition:
-
-```typescript
-createPrism(origin: Vector3, base: number, height: number): Array<Vector3> {
-    const halfBase = base / 2;
-    const halfHeight = height / 2;
-    return [
-        new Vector3(origin.x - halfBase, origin.y - halfHeight, origin.z),
-        new Vector3(origin.x + halfBase, origin.y - halfHeight, origin.z),
-        new Vector3(origin.x + halfBase, origin.y + halfHeight, origin.z),
-        new Vector3(origin.x - halfBase, origin.y + halfHeight, origin.z),
-        new Vector3(origin.x, origin.y, origin.z - halfBase),
-    ];
-}
-```
-
-#### Transformations
-
-The Transformation class handles all 3D transformations. Let's explore the mathematical concepts and their implementation:
-
-##### Translation
-
-Translation moves objects in 3D space using vector addition:
-
-$$
-\begin{pmatrix}
-x' \\
-y' \\
-z'
-\end{pmatrix}
-=
-\begin{pmatrix}
-x + t_x \\
-y + t_y \\
-z + t_z
-\end{pmatrix}
-$$
-
-```typescript
-static translate(vertices: Vector3[], offset: Vector3): Vector3[] {
-    return vertices.map(vertex => vertex.add(offset));
-}
-```
-
-##### Scaling
-
-Scaling adjusts object size from a center point:
-
-$$
-\begin{pmatrix}
-x' \\
-y' \\
-z'
-\end{pmatrix}
-=
-\begin{pmatrix}
-s_x(x - c_x) + c_x \\
-s_y(y - c_y) + c_y \\
-s_z(z - c_z) + c_z
-\end{pmatrix}
-$$
-
-```typescript
-static scale(vertices: Vector3[], scale: number, origin: Vector3 = new Vector3(0, 0, 0)): Vector3[] {
-    return vertices.map(vertex => {
-        const translated = vertex.subtract(origin);
-        const scaled = translated.multiply(scale);
-        return scaled.add(origin);
-    });
-}
-```
-
-##### Rotation
-
-Rotation combines X, Y, and Z axis rotations using the rotation functions from our rotation implementation (discussed earlier in the Rotation Implementation section). Each axis rotation uses the corresponding rotation matrix:
-
-- X-axis rotation: $R_x(\theta)$
-- Y-axis rotation: $R_y(\theta)$
-- Z-axis rotation: $R_z(\theta)$
-
-The implementation chains these rotations in sequence:
-
-```typescript
-static rotate(vertices: Vector3[], angleX?: Angle, angleY?: Angle, angleZ?: Angle): Vector3[] {
-    return vertices.map(vertex => {
-        let result = vertex;
-        if (angleX) result = rotateX(result, angleX);
-        if (angleY) result = rotateY(result, angleY);
-        if (angleZ) result = rotateZ(result, angleZ);
-        return result;
-    });
-}
-```
-
-Here's a practical example of how these rotation functions work:
-
-```typescript
-const vector = new Vector3(1, 2, 3);
-const angle = new Angle(90);
-const rotatedVector = rotateZ(vector, angle); // rotatedVector is Vector3(-2, 1, 3)
-```
-
-This example demonstrates how the Z-axis rotation function transforms a vector by 90 degrees around the Z-axis, maintaining the Z coordinate while rotating the X and Y coordinates.
-
-##### Key Features
-
-- **Vertex Management**: Uses Vector3 arrays for precise vertex storage
-- **Transformation Chaining**: Supports multiple transformations in sequence
-- **Origin-Based Operations**: All transformations can be relative to any point
-- **Type Safety**: Strong TypeScript typing ensures correct operations
-- **Performance**: Uses vector operations for efficient calculations
-- **Mathematical Consistency**: Implements geometric transformations accurately
-- **Shape Preservation**: Maintains object proportions during transformations
-- **Rotation Reusability**: Leverages the rotation implementation from math/rotation.ts
-
-### Rendering System Implementation
-
-Let's dive into how we transform our 3D objects into ASCII graphics in the terminal. This is where our mathematical concepts meet the screen.
-
-#### Terminal Rendering
-
-The Terminal class manages our ASCII graphics with two key buffers:
-
-```typescript
-export class Terminal {
-    private _buffer: string[][];        // Stores ASCII characters
-    private _depthBuffer: number[][];   // Stores z-depth values
     
-    constructor(
-        width: number = process.stdout.columns, 
-        height: number = process.stdout.rows,
-        defaultChar: string = ' '
-    ) {
-        // Initialize buffers
-        this._buffer = [];
-        this._depthBuffer = [];
-        
-        for (let y = 0; y < height; y++) {
-            this._buffer[y] = Array(width).fill(defaultChar);
-            this._depthBuffer[y] = Array(width).fill(Infinity);
-        }
+    getCubeFaces(): Array<number[]> {
+        return [
+            // Front face
+            [0, 1, 2], [1, 3, 2],
+            // Back face
+            [4, 6, 5], [5, 6, 7],
+            // ... more faces
+        ];
     }
-}
-```
-
-##### Key Features of Terminal
-
-1. **Double Buffering**
-   - Frame buffer for characters
-   - Depth buffer for z-ordering
-   - Ensures proper object ordering
-
-2. **Screen Management**
-   - Terminal size aware
-   - Cursor control
-   - Screen clearing
-
-3. **Drawing Operations**
-   - Point drawing with z-buffering
-   - Line drawing using Bresenham's algorithm
-   - Character-based rendering
-
-```typescript
-// Example drawing operations
-const terminal = new Terminal();
-
-terminal.drawPoints(vertices, "@", zDepth);
-
-terminal.drawLine(p1, p2, "#", zDepth);
-```
-
-#### Shading System
-
-The Shading class handles light calculations and ASCII character mapping:
-
-```typescript
-export class Shading {
-    constructor(
-        shadingChars: string = Settings.SHADING_CHARACTERS,
-        lightPosition: Vector3 = new Vector3(
-            Settings.LIGHT_POSITION.x,
-            Settings.LIGHT_POSITION.y,
-            Settings.LIGHT_POSITION.z
-        ),
-        ambientLight: number = Settings.AMBIENT_LIGHT
-    ) {
-        this._shadingChars = shadingChars;
-        this._lightPosition = lightPosition;
-        this._ambientLight = ambientLight;
-    }
-}
-```
-
-##### Normal Calculation
-
-The shading system calculates surface normals using vector cross products:
-
-$$
-\vec{n} = \vec{e_1} \times \vec{e_2}
-$$
-
-Where:
-- $\vec{e_1}$ and $\vec{e_2}$ are edge vectors of the triangle
-- $\vec{n}$ is the normal vector
-
-```typescript
-calculateNormal(v1: Vector3, v2: Vector3, v3: Vector3): Vector3 {
-    const edge1 = v2.subtract(v1);
-    const edge2 = v3.subtract(v1);
     
-    return new Vector3(
-        edge1.y * edge2.z - edge1.z * edge2.y,
-        edge1.z * edge2.x - edge1.x * edge2.z,
-        edge1.x * edge2.y - edge1.y * edge2.x
-    );
+    // Other shape methods...
 }
 ```
 
-##### Light Intensity Calculation
+The class provides methods for both generating vertices that define different shapes like cubes and prisms, and for defining how those vertices connect to form faces. This encapsulation keeps our code clean and organized.
 
-Light intensity is calculated using the dot product of the normal and light direction:
+### Working with Triangular Faces
 
-$$
-I = \max(0, \vec{n} \cdot \vec{l}) + I_{ambient}
-$$
+Each 3D object is constructed from triangular faces. Why triangles? Because they're the simplest polygon that can define a plane in 3D space. Unlike squares or other polygons which might become distorted during transformation, triangles always remain flat. Additionally, any complex shape can be broken down into triangles, making them the fundamental building block for 3D graphics.
 
-Where:
-- $\vec{n}$ is the normalized surface normal
-- $\vec{l}$ is the normalized light direction
-- $I_{ambient}$ is the ambient light level
+Each triplet of numbers in our face definitions is a reference to three vertices from our vertex array. For example, `[0, 1, 2]` means "create a triangle using the vertices at indices 0, 1, and 2."
 
-```typescript
-calculateLightIntensity(point: Vector3, normal: Vector3): number {
-    const lightDir = this._lightPosition.subtract(point);
-    const dotProduct = normal.dot(lightDir);
-    return Math.max(0, dotProduct) + this._ambientLight;
-}
-```
+### Creating and Working with 3D Objects
 
-##### Key Features of Shading
-
-- **Lighting Model**: Uses dot product for realistic lighting
-- **Ambient Light**: Prevents complete darkness
-- **Character Mapping**: Maps light intensity to ASCII characters
-- **Performance**: Optimized calculations for real-time rendering
-- **Configurable**: Customizable shading characters and light position
-
-#### Rotation in Rendering
-
-The rotation functions are extensively used in the rendering pipeline. Here's a practical example of how they're used:
+To create a 3D object in our system, we:
 
 ```typescript
-const vector = new Vector3(1, 2, 3);
-const angle = new Angle(90);
-const rotatedVector = rotateZ(vector, angle); // rotatedVector is Vector3(-2, 1, 3)
-```
+// Initialize components
+const terminal = new Terminal(80, 24);
+const projection = new Projection(terminal.width, terminal.height);
+const renderer = new Renderer(projection);
+const shading = new Shading(" .,:-=+*#%@", new Vector3(0, 0, -10));
 
-This example demonstrates how the Z-axis rotation function transforms a vector by 90 degrees around the Z-axis, maintaining the Z coordinate while rotating the X and Y coordinates.`
+// Create a 3D cube
+const cube = new CubeBuilder()
+    .withSize(2)
+    .withPosition(0, 0, 0)
+    .build();
 
-#### Shading System
+// Animation parameters
+let rotationSpeed = 1;
 
-The Shading class handles light calculations and ASCII character mapping:
-
-```typescript
-export class Shading {
-    calculateNormal(v1: Vector3, v2: Vector3, v3: Vector3): Vector3 {
-        const edge1 = v2.subtract(v1);
-        const edge2 = v3.subtract(v1);
-        
-        return new Vector3(
-            edge1.y * edge2.z - edge1.z * edge2.y,
-            edge1.z * edge2.x - edge1.x * edge2.z,
-            edge1.x * edge2.y - edge1.y * edge2.x
-        );
-    }
-
-    calculateLightIntensity(normal: Vector3, lightPosition: Vector3): number {
-        // Calculate light intensity based on normal and light position
-    }
-}
-```
-
-##### Key Features
-
-- **Frame Buffer**: Stores current frame state
-- **Depth Buffer**: Manages object ordering
-- **Light Calculations**: Handles normal vectors and light intensity
-- **ASCII Mapping**: Converts light intensity to characters
-- **Performance**: Optimized for real-time rendering
-
-#### Vectors
-
-The `vector.ts` file is our foundation, implementing both 3D and 2D vector operations. Let's dive into the mathematical concepts and their implementation:
-
-##### Vector3 Class
-
-The Vector3 class represents points in 3D space. Mathematically, a 3D vector is defined by three coordinates:
-
-$$
-\vec{v} = (x, y, z)
-$$
-
-The implementation follows this mathematical definition:
-
-```typescript
-export class Vector3 {
-    constructor(public x: number, public y: number, public z: number) {}
-}
-```
-
-##### Vector Operations
-
-The class implements basic vector operations that form the foundation of our 3D transformations:
-
-1. **Vector Addition**
-   - Mathematically: $\vec{a} + \vec{b} = (a_x + b_x, a_y + b_y, a_z + b_z)$
-   - Implementation:
-
-        ```typescript
-        add(v: Vector3): Vector3 {
-            return new Vector3(this.x + v.x, this.y + v.y, this.z + v.z);
-        }
-        ```
-
-2. **Vector Subtraction**
-   - Mathematically: $\vec{a} - \vec{b} = (a_x - b_x, a_y - b_y, a_z - b_z)$
-   - Implementation:
-
-        ```typescript
-        subtract(v: Vector3): Vector3 {
-            return new Vector3(this.x - v.x, this.y - v.y, this.z - v.z);
-        }
-        ```
-
-3. **Scalar Multiplication**
-   - Mathematically: $k\vec{v} = (kx, ky, kz)$
-   - Implementation:
-
-        ```typescript
-        multiply(Scalar: number): Vector3 {
-            return new Vector3(this.x * Scalar, this.y * Scalar, this.z * Scalar);
-        }
-        ```
-
-##### Vector2 Class
-
-The Vector2 class handles 2D operations, crucial for our terminal rendering:
-
-```typescript
-export class Vector2 {
-    constructor(public x: number, public y: number) {}
-}
-```
-
-It implements the same operations as Vector3 but for 2D space:
-
-1. **2D Vector Addition**
-   - Mathematically: $\vec{a} + \vec{b} = (a_x + b_x, a_y + b_y)$
-   - Implementation:
-
-        ```typescript
-        add(v: Vector2): Vector2 {
-            return new Vector2(this.x + v.x, this.y + v.y);
-        }
-        ```
-
-2. **2D Vector Subtraction**
-   - Mathematically: $\vec{a} - \vec{b} = (a_x - b_x, a_y - b_y)$
-   - Implementation:
-
-        ```typescript
-        subtract(v: Vector2): Vector2 {
-            return new Vector2(this.x - v.x, this.y - v.y);
-        }
-        ```
-
-##### Key Features
-
-- **Immutability**: Each operation returns a new instance, ensuring predictable behavior
-- **Type Safety**: TypeScript's type system ensures correct vector operations
-- **Clean Separation**: Vector3 for 3D space, Vector2 for 2D projections
-- **Functional Approach**: Pure functions that don't modify state
-
-These vector operations form the foundation of all our 3D transformations, from rotations to projections. The immutability pattern helps maintain consistency in our animation loops and transformations.
-
-#### Rotation Implementation
-
-In `rotation.ts`, we bring our rotation concepts to life with a clean, functional approach. Let's explore the mathematical concepts and their implementation:
-
-##### Angle Representation
-
-The Angle class handles angle representation and conversion:
-
-```typescript
-export class Angle {
-    constructor(public degrees: number) {}
+// Main rendering loop
+function animate() {
+    // Clear the terminal
+    terminal.clear();
     
-    toRadians(): number {
-        return (this.degrees * Math.PI) / 180;
-        }
-    }
+    // Update cube rotation
+    cube.rotation.x += rotationSpeed;
+    cube.rotation.y += rotationSpeed * 0.5;
+    
+    // Render the frame
+    renderer.render(cube, terminal, shading);
+    
+    // Schedule the next frame
+    setTimeout(animate, 50);
+}
+
+// Start the animation
+animate();
 ```
 
-This class ensures consistent angle handling throughout the system, converting degrees to radians for trigonometric calculations.
+This creates a continuous animation loop that updates and renders the cube 20 times per second, creating a smooth rotation effect.
 
-##### Axis-Specific Rotations
+## Rendering System Implementation
 
-The implementation provides three main rotation functions, each corresponding to an axis:
+Now let's tie everything together and see how our rendering system works as a whole! This is where all the components we've discussed so far come together to create a smooth, animated 3D experience in your terminal.
 
-1. **X-Axis Rotation**
-   - Rotation matrix:
-   $$
-   R_x(\theta) = 
-   \begin{pmatrix}
-   1 & 0 & 0 \\
-   0 & \cos\theta & -\sin\theta \\
-   0 & \sin\theta & \cos\theta
-   \end{pmatrix}
-   $$
-   - Implementation:
+### The Renderer Class
 
-        ```typescript
-        export function rotateX(vector: Vector3, angle: Angle): Vector3 {
-            const rad = angle.toRadians();
-            const cos = Math.cos(rad);
-            const sin = Math.sin(rad);
-            return new Vector3(
-                vector.x,
-                vector.y * cos - vector.z * sin,
-                vector.y * sin + vector.z * cos
-            )
-        }
-        ```
-
-2. **Y-Axis Rotation**
-   - Rotation matrix:
-   $$
-   R_y(\theta) = 
-   \begin{pmatrix}
-   \cos\theta & 0 & \sin\theta \\
-   0 & 1 & 0 \\
-   -\sin\theta & 0 & \cos\theta
-   \end{pmatrix}
-   $$
-   - Implementation:
-
-        ```typescript
-        export function rotateY(vector: Vector3, angle: Angle): Vector3 {
-            const rad = angle.toRadians();
-            const cos = Math.cos(rad);
-            const sin = Math.sin(rad);
-            return new Vector3(
-                vector.x * cos + vector.z * sin,
-                vector.y,
-                -vector.x * sin + vector.z * cos
-            )
-        }
-        ```
-
-3. **Z-Axis Rotation**
-   - Rotation matrix:
-   $$
-   R_z(\theta) = 
-   \begin{pmatrix}
-   \cos\theta & -\sin\theta & 0 \\
-   \sin\theta & \cos\theta & 0 \\
-   0 & 0 & 1
-   \end{pmatrix}
-   $$
-   - Implementation:
-
-        ```typescript
-        export function rotateZ(vector: Vector3, angle: Angle): Vector3 {
-            const rad = angle.toRadians();
-            const cos = Math.cos(rad);
-            const sin = Math.sin(rad);
-            return new Vector3(
-                vector.x * cos - vector.y * sin,
-                vector.x * sin + vector.y * cos,
-                vector.z
-            )
-        }
-        ```
-
-##### Key Features
-
-- **Immutability**: Each rotation returns a new Vector3 instance
-- **Trigonometric Precision**: Uses Math.cos and Math.sin for accurate rotations
-- **Axis Separation**: Clear separation of concerns for each axis
-- **Memory Efficiency**: Reuses calculations (cos and sin) for performance
-- **Type Safety**: Strong TypeScript typing ensures correct usage
-
-The rotation implementation follows the mathematical principles of rotation matrices while maintaining a clean, functional approach. Each axis rotation is independent, allowing for easy combination of rotations around multiple axes.
-
-#### Projection Implementation
-
-The `projection.ts` file bridges our 3D world with the terminal screen. Let's explore the mathematical concepts and their implementation:
-
-##### Orthographic Projection
-
-Orthographic projection transforms 3D coordinates into 2D screen coordinates while maintaining consistent scaling. Mathematically, it's defined as:
-
-$$
-\begin{pmatrix}
-x' \\
-y' \\
-\end{pmatrix}
-=
-\begin{pmatrix}
-x \cdot scale + centerX \\
--y \cdot scale + centerY \\
-\end{pmatrix}
-$$
-
-The implementation follows this mathematical model:
+The `Renderer` class is the central orchestrator of our rendering process. It takes an `Object3D`, applies all necessary transformations, and renders it to the terminal:
 
 ```typescript
-export class Projection {
+export class Renderer {
     constructor(
-        public _screenWidth: number = process.stdout.columns,
-        public _screenHeight: number = process.stdout.rows,
-        public _scale: number = 1,
-        public _zOffset?: number
+        private _projection: Projection
     ) {}
+    
+    public render(object: Object3D, terminal: Terminal, shading: Shading): void {
+        // Process each mesh in the object
+        for (const mesh of object.meshes) {
+            // Process each triangle in the mesh
+            for (const triangle of mesh.triangles) {
+                // Apply transformations and render the triangle
+                this._renderTriangle(object, mesh, triangle, terminal, shading);
+            }
+        }
+        
+        // Display the final frame
+        terminal.render();
+    }
+    
+    // Other methods for transformation and rendering
+    // ...
 }
 ```
 
-##### Projection Process
+### The Rendering Pipeline
 
-The projection process involves several key steps:
+Let's walk through the complete rendering pipeline, from 3D object to terminal display:
 
-1. **Center Calculation**
-   - CenterX = screenWidth / 2
-   - CenterY = screenHeight / 2
-   
-2. **Coordinate Transformation**
+1. **Object Preparation**: The main application creates 3D objects and sets up the rendering environment
+2. **Transformation Chain**: For each frame:
+   - Apply scaling transformations to the object
+   - Apply rotation transformations (using rotation matrices)
+   - Apply translation to position the object in space
+3. **Triangle Processing**: For each triangle:
+   - Transform all its vertices based on object properties
+   - Calculate the surface normal to determine light interaction
+   - Determine if the triangle is facing the camera (backface culling)
+4. **Projection**: Project the 3D points onto the 2D screen:
+   - Apply the orthographic projection formula
+   - Scale and offset to fit the terminal dimensions
+5. **Shading**: Determine how bright each triangle should be:
+   - Calculate the dot product between the normal and light direction
+   - Apply the lighting formula to determine the intensity
+   - Select the appropriate ASCII character based on intensity
+6. **Terminal Rendering**: Draw the projected triangles to the terminal:
+   - Fill the triangle area with the shading character
+   - Use the depth buffer to handle overlapping triangles
+   - Display the final frame on the terminal
 
-   ```typescript
-   project3Dto2D(v: Array<Vector3>): Array<Vector2> {
-       const centerX = this._screenWidth / 2;
-       const centerY = this._screenHeight / 2;
+This pipeline runs continuously, with each new frame updating the positions and orientations of objects to create smooth animations.
 
-       const projected: Array<Vector2> = [];
-       for (const vector of v) {
-           const x = centerX + vector.x * this._scale;
-           const y = centerY - vector.y * this._scale;
-           projected.push(new Vector2(x, y));
-       }
-       return projected;
-   }
-   ```
+### Performance Optimization
 
-##### Key Features
+Rendering even simple 3D shapes in a terminal can be computationally intensive. To keep performance snappy, I've implemented several optimizations:
 
-- **Orthographic Projection**: Maintains consistent scaling regardless of depth
-- **Y-Axis Inversion**: Adjusts for terminal coordinate system (top-left origin)
-- **Screen Centering**: Automatically centers objects on the screen
-- **Scaling Control**: Allows for size adjustment through scale parameter
-- **Depth Sorting**: Maintains depth information for proper object ordering
+- **Backface Culling**: Skip triangles that face away from the viewer
+- **Depth Buffering**: Only render pixels that are in front of already-rendered pixels
+- **Buffer Reuse**: Reuse buffers between frames instead of reallocating memory
+- **Efficient Triangle Filling**: Use a scanline algorithm to fill triangles with minimal computation
 
-The projection implementation is crucial for our terminal-based renderer as it:
-- Transforms 3D coordinates into terminal grid positions
-- Maintains proper proportions through consistent scaling
-- Handles terminal-specific coordinate systems
-- Preserves depth information for proper rendering order
+These optimizations ensure that even on modest hardware, you can enjoy smooth animation of 3D objects in your terminal.
 
-### Code Structure
+### Putting It All Together
 
-The math core is designed to be:
+The final system integrates all these components to create a cohesive 3D rendering experience. Here's a more complete example of how the main application brings everything together:
 
-- Reusable across different parts of the renderer
-- Efficient for real-time calculations
-- Easy to extend for new mathematical operations
-- Well-documented for easy understanding
+```typescript
+// Initialize components
+const terminal = new Terminal(80, 24);
+const projection = new Projection(terminal.width, terminal.height);
+const renderer = new Renderer(projection);
+const shading = new Shading(" .,:-=+*#%@", new Vector3(0, 0, -10));
 
-Each file focuses on a specific mathematical concept, making the code organized and maintainable.
+// Create a 3D cube
+const cube = new CubeBuilder()
+    .withSize(2)
+    .withPosition(0, 0, 0)
+    .build();
 
-This implementation forms the foundation of our entire 3D rendering system. Everything else builds upon these mathematical operations to create our final terminal-based 3D renderer.
+// Animation parameters
+let rotationSpeed = 1;
+
+// Main rendering loop
+function animate() {
+    // Clear the terminal
+    terminal.clear();
+    
+    // Update cube rotation
+    cube.rotation.x += rotationSpeed;
+    cube.rotation.y += rotationSpeed * 0.5;
+    
+    // Render the frame
+    renderer.render(cube, terminal, shading);
+    
+    // Schedule the next frame
+    setTimeout(animate, 50);
+}
+
+// Start the animation
+animate();
+```
+
+This creates a continuous animation loop that updates and renders the cube 20 times per second, creating a smooth rotation effect.
+
+## Conclusion
+
+What I love about this project is how it bridges the gap between abstract mathematical concepts and something visually tangible. You can literally see the math in action as the cube rotates on your screen.
+
+This project is meant to be both educational and fun. It demonstrates core concepts of computer graphics in a uniquely accessible way. By using the terminal instead of a fancy graphics API, we get to see exactly what's happening at each step of the rendering process.
+
+I've designed the code to be modular and extensible, so you can easily:
+
+- Add new 3D shapes beyond cubes
+- Implement different shading models
+- Create more complex scenes with multiple objects
+- Add interactive elements like keyboard controls
+
+I hope you've enjoyed exploring this project with me. There's something magical about creating 3D worlds from nothing but text characters, and I encourage you to experiment further with the code.
+
+If you'd like to learn more about the concepts we've covered, check out resources on linear algebra, computer graphics fundamentals, and 3D rendering techniques. The principles we've used here are the same ones that power modern video games and 3D applications — just simplified to their essence.
+
+### A Note on AI-Assisted Development
+
+I'd like to share that this project represents what I believe is the proper use of AI as a copilot in the development process — not just another tool, but a collaborative partner in learning. Throughout this journey, we sourced mathematical documents together and engaged in extensive discussions about complex concepts, promoting logical understanding rather than simply generating code.
+
+In this AI era, I believe the most valuable approach isn't traditional code retention or "vibe coding" (copy-pasting snippets without understanding). Instead, it's about using AI to enhance conceptual understanding, where we explore the why behind the how. The 3D math concepts in this project weren't just implemented; they were understood, discussed, and refined through meaningful collaboration.
+
+This approach to AI-assisted development — focusing on learning and understanding — has made the journey of creating Axis as rewarding as the destination itself.
+
+Happy coding, and enjoy your terminal-based 3D adventures!

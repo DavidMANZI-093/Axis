@@ -32,36 +32,6 @@ class Main {
   // Shape definitions
   private _shapes: { [key: string]: () => Vector3[] };
   
-  // Face definitions for shapes
-  private _cubeFaces: number[][] = [
-    // Front face
-    [0, 1, 2], [1, 3, 2],
-    // Back face
-    [4, 6, 5], [5, 6, 7],
-    // Left face
-    [0, 2, 4], [2, 6, 4],
-    // Right face
-    [1, 5, 3], [3, 5, 7],
-    // Top face
-    [2, 3, 6], [3, 7, 6],
-    // Bottom face
-    [0, 4, 1], [1, 4, 5]
-  ];
-  
-  // Define prism faces (triangles)
-  private _prismFaces: number[][] = [
-    // Base triangle
-    [0, 1, 2], [0, 2 ,3],
-    // Side 1
-    [0, 1, 4],
-    // Side 2
-    [1, 2, 4],
-    // Side 3
-    [2, 3, 4],
-    // Side 4
-    [3, 0, 4]
-  ];
-
   /**
    * Creates a new Main instance.
    */
@@ -190,7 +160,7 @@ class Main {
       const projectedVertices = this._projector.project3Dto2D(translatedVertices);
       
       // Get current shape faces
-      const faces = this._currentShape === 'cube' ? this._cubeFaces : this._prismFaces;
+      const faces = this._currentShape === 'cube' ? this._object3D.getCubeFaces() : this._object3D.getPrismFaces();
       
       // Render each face with appropriate shading
       this._renderFaces(translatedVertices, projectedVertices, faces);

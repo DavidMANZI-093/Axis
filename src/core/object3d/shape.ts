@@ -25,6 +25,28 @@ export class Object3D {
     }
 
     /**
+     * Gets the face definitions for a cube.
+     * Each triplet of numbers represents the indices of vertices that form a triangular face.
+     * @returns an array of triangle face definitions
+     */
+    getCubeFaces(): Array<number[]> {
+        return [
+            // Front face
+            [0, 1, 2], [1, 3, 2],
+            // Back face
+            [4, 6, 5], [5, 6, 7],
+            // Left face
+            [0, 2, 4], [2, 6, 4],
+            // Right face
+            [1, 5, 3], [3, 5, 7],
+            // Top face
+            [2, 3, 6], [3, 7, 6],
+            // Bottom face
+            [0, 4, 1], [1, 4, 5]
+        ];
+    }
+
+    /**
      * Creates a prism shape with the given origin, base, and height.
      * @param origin - the center point of the prism
      * @param base - the base size of the prism
@@ -35,12 +57,29 @@ export class Object3D {
         const halfBase = base / 2;
         const halfHeight = height / 2;
         return [
-            new Vector3(origin.x - halfBase, origin.y - halfHeight / 2, origin.z),
-            new Vector3(origin.x + halfBase, origin.y - halfHeight / 2, origin.z),
-            new Vector3(origin.x + halfBase, origin.y + halfHeight / 2, origin.z),
-            new Vector3(origin.x - halfBase, origin.y + halfHeight / 2, origin.z),
+            new Vector3(origin.x - halfBase, origin.y - halfHeight / 1.5, origin.z),
+            new Vector3(origin.x + halfBase, origin.y - halfHeight / 1.5, origin.z),
+            new Vector3(origin.x + halfBase, origin.y + halfHeight / 1.5, origin.z),
+            new Vector3(origin.x - halfBase, origin.y + halfHeight / 1.5, origin.z),
             
-            new Vector3(origin.x, origin.y, origin.z - halfBase),
+            new Vector3(origin.x, origin.y, origin.z - halfBase * 2),
         ]
+    }
+
+    /**
+     * Gets the face definitions for a prism.
+     * Each triplet of numbers represents the indices of vertices that form a triangular face.
+     * @returns an array of triangle face definitions
+     */
+    getPrismFaces(): Array<number[]> {
+        return [
+            // Base
+            [0, 1, 2], [0, 2, 3],
+            // Side faces
+            [0, 4, 1],
+            [1, 4, 2],
+            [2, 4, 3],
+            [3, 4, 0]
+        ];
     }
 }
