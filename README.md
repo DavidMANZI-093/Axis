@@ -330,32 +330,55 @@ This creates a continuous animation loop that updates and renders the cube 20 ti
 
 Now let's tie everything together and see how our rendering system works as a whole! This is where all the components we've discussed so far come together to create a smooth, animated 3D experience in your terminal.
 
-### The Renderer Class
+### The Main Class
 
-The `Renderer` class is the central orchestrator of our rendering process. It takes an `Object3D`, applies all necessary transformations, and renders it to the terminal:
+The `Main` class is the central orchestrator of our rendering process handling the 3D terminal animation and integrating all the components together:
 
 ```typescript
-export class Renderer {
-    constructor(
-        private _projection: Projection
-    ) {}
+class Main {
+  // Class variables
+  private _terminal: Terminal;
+  private _object3D: Object3D;
+  private _projector: Projection;
+  private _shading: Shading;
+  private _logger: Logger;
+  private _timer: Timer;
+
+  // Animation variables
+  private _rotationX: number = 0;
+  private _rotationY: number = 0;
+  private _rotationZ: number = 20;
+  private _currentShape: string = 'cube';
+  private _vertices: Vector3[];
+  
+  // Shape definitions
+  private _shapes: { [key: string]: () => Vector3[] };
+  
+  constructor() {
+    // Initialize components
+    this._terminal = new Terminal();
+    this._object3D = new Object3D();
+    this._projector = new Projection(
+      this._terminal.getWidth(),
+      this._terminal.getHeight()
+    );
+    this._shading = new Shading();
+    this._logger = new Logger(true, LogLevel.INFO);
     
-    public render(object: Object3D, terminal: Terminal, shading: Shading): void {
-        // Process each mesh in the object
-        for (const mesh of object.meshes) {
-            // Process each triangle in the mesh
-            for (const triangle of mesh.triangles) {
-                // Apply transformations and render the triangle
-                this._renderTriangle(object, mesh, triangle, terminal, shading);
-            }
-        }
-        
-        // Display the final frame
-        terminal.render();
-    }
+    // Define available shapes
+    this._shapes = {
+      cube: () => this._object3D.createCube(new Vector3(0, 0, 0), Settings.OBJECT_SCALE),
+      prism: () => this._object3D.createPrism(new Vector3(0, 0, 0), Settings.OBJECT_SCALE + 4, Settings.OBJECT_SCALE + 4),
+    };
     
-    // Other methods for transformation and rendering
-    // ...
+    // Create the initial 3D object
+    this._vertices = this._shapes[this._currentShape]();
+    
+    // Initialize animation timer
+    this._timer = new Timer(Settings.FPS, this._update.bind(this));
+  }
+  
+  // Other methods...
 }
 ```
 
@@ -363,28 +386,79 @@ export class Renderer {
 
 Let's walk through the complete rendering pipeline, from 3D object to terminal display:
 
-1. **Object Preparation**: The main application creates 3D objects and sets up the rendering environment
-2. **Transformation Chain**: For each frame:
-   - Apply scaling transformations to the object
-   - Apply rotation transformations (using rotation matrices)
-   - Apply translation to position the object in space
-3. **Triangle Processing**: For each triangle:
-   - Transform all its vertices based on object properties
-   - Calculate the surface normal to determine light interaction
-   - Determine if the triangle is facing the camera (backface culling)
-4. **Projection**: Project the 3D points onto the 2D screen:
-   - Apply the orthographic projection formula
-   - Scale and offset to fit the terminal dimensions
-5. **Shading**: Determine how bright each triangle should be:
-   - Calculate the dot product between the normal and light direction
-   - Apply the lighting formula to determine the intensity
-   - Select the appropriate ASCII character based on intensity
-6. **Terminal Rendering**: Draw the projected triangles to the terminal:
-   - Fill the triangle area with the shading character
-   - Use the depth buffer to handle overlapping triangles
-   - Display the final frame on the terminal
+1. **Object Selection**: The main application chooses between different shape generators (cube, prism)
+2. **Animation Loop**: For each frame, the `_update()` method:
+   - Clears the terminal buffer
+   - Updates rotation angles
+   - Applies transformations to the vertices
+3. **Transformations**: Applied in sequence:
+   - Rotation transformations using the `Transformation.rotate()` method
+   - Translation to move the object for better visibility
+4. **Projection**: Convert 3D vertices to 2D screen coordinates:
+   - Using the `Projection.project3Dto2D()` method
+5. **Face Rendering**: Process each triangle face:
+   - Get face definitions from `Object3D.getCubeFaces()` or `Object3D.getPrismFaces()`
+   - Calculate face normals for lighting
+   - Perform back-face culling (skip faces pointing away from the camera)
+   - Calculate light intensity and select appropriate shading character
+   - Draw triangles to the terminal buffer
+6. **Display**: Show the result on the terminal:
+   - Add UI information (shape name, FPS, rotation angles)
+   - Call `terminal.render()` to display the frame
 
-This pipeline runs continuously, with each new frame updating the positions and orientations of objects to create smooth animations.
+### Putting It All Together
+
+Here's how the update method brings everything together in the rendering pipeline:
+
+```typescript
+private _update(): void {
+  try {
+    // Clear the buffer for the next frame
+    this._terminal.clearBuffer();
+    
+    // Auto-rotate the object
+    this._rotationX += Settings.ANIMATION_SPEED / 2;
+    this._rotationY += Settings.ANIMATION_SPEED / 4;
+    
+    // Apply rotation to vertices
+    const rotatedVertices = Transformation.rotate(
+      this._vertices,
+      new Angle(this._rotationX),
+      new Angle(this._rotationY),
+      new Angle(this._rotationZ)
+    );
+    
+    // Move the object away from the camera for better visibility
+    const translatedVertices = Transformation.translate(
+      rotatedVertices,
+      new Vector3(0, 0, Settings.RENDER_DISTANCE)
+    );
+    
+    // Project 3D vertices to 2D
+    const projectedVertices = this._projector.project3Dto2D(translatedVertices);
+    
+    // Get current shape faces
+    const faces = this._currentShape === 'cube' 
+      ? this._object3D.getCubeFaces() 
+      : this._object3D.getPrismFaces();
+    
+    // Render each face with appropriate shading
+    this._renderFaces(translatedVertices, projectedVertices, faces);
+    
+    // Render info text
+    this._terminal.drawText(1, 1, `Shape: ${this._currentShape}`, 0);
+    this._terminal.drawText(1, 2, `FPS: ${this._timer.getCurrentFps().toFixed(1)}`, 0);
+    this._terminal.drawText(1, 3, `Rotation: X=${this._rotationX.toFixed(1)} Y=${this._rotationY.toFixed(1)} Z=${this._rotationZ.toFixed(1)}`, 0);
+    
+    // Render the frame
+    this._terminal.render();
+  } catch (error) {
+    this._logger.error(`Error in update: ${error}`);
+  }
+}
+```
+
+This creates a continuous animation loop that updates and renders our 3D objects in real-time, with keyboard controls allowing you to interact with the animation by changing rotations or switching between shapes.
 
 ### Performance Optimization
 
@@ -396,48 +470,6 @@ Rendering even simple 3D shapes in a terminal can be computationally intensive. 
 - **Efficient Triangle Filling**: Use a scanline algorithm to fill triangles with minimal computation
 
 These optimizations ensure that even on modest hardware, you can enjoy smooth animation of 3D objects in your terminal.
-
-### Putting It All Together
-
-The final system integrates all these components to create a cohesive 3D rendering experience. Here's a more complete example of how the main application brings everything together:
-
-```typescript
-// Initialize components
-const terminal = new Terminal(80, 24);
-const projection = new Projection(terminal.width, terminal.height);
-const renderer = new Renderer(projection);
-const shading = new Shading(" .,:-=+*#%@", new Vector3(0, 0, -10));
-
-// Create a 3D cube
-const cube = new CubeBuilder()
-    .withSize(2)
-    .withPosition(0, 0, 0)
-    .build();
-
-// Animation parameters
-let rotationSpeed = 1;
-
-// Main rendering loop
-function animate() {
-    // Clear the terminal
-    terminal.clear();
-    
-    // Update cube rotation
-    cube.rotation.x += rotationSpeed;
-    cube.rotation.y += rotationSpeed * 0.5;
-    
-    // Render the frame
-    renderer.render(cube, terminal, shading);
-    
-    // Schedule the next frame
-    setTimeout(animate, 50);
-}
-
-// Start the animation
-animate();
-```
-
-This creates a continuous animation loop that updates and renders the cube 20 times per second, creating a smooth rotation effect.
 
 ## Conclusion
 
