@@ -518,8 +518,8 @@ export class Projection {
 The projection process involves several key steps:
 
 1. **Center Calculation**
-   - CenterX = screenWidth / 2
-   - CenterY = screenHeight / 2
+   - `CenterX = screenWidth / 2`
+   - `CenterY = screenHeight / 2`
    
 2. **Coordinate Transformation**
 
@@ -558,7 +558,31 @@ Let's dive into how we create and manage 3D objects in our system. This is where
 
 #### Shape Creation
 
-The Shape class provides methods for creating various 3D objects:
+The Object3D class provides methods for creating various 3D objects:
+
+##### Cube Creation
+
+A cube is defined by its origin and scale. Mathematically, each vertex is calculated relative to the cube's center and scale:
+
+$$
+\begin{aligned}
+V_1 &= (x - s/2, y - s/2, z - s/2) \\
+V_2 &= (x + s/2, y - s/2, z - s/2) \\
+V_3 &= (x - s/2, y + s/2, z - s/2) \\
+V_4 &= (x + s/2, y + s/2, z - s/2) \\
+V_5 &= (x - s/2, y - s/2, z + s/2) \\
+V_6 &= (x + s/2, y - s/2, z + s/2) \\
+V_7 &= (x - s/2, y + s/2, z + s/2) \\
+V_8 &= (x + s/2, y + s/2, z + s/2)
+\end{aligned}
+$$
+
+Where:
+- $x, y, z$ are the coordinates of the cube's center
+- $s$ is the scale (side length) of the cube
+- Each vertex is offset from the center by $s/2$ in each dimension
+
+The implementation follows this mathematical definition:
 
 ```typescript
 export class Object3D {
