@@ -36,7 +36,7 @@ class Main {
    * Creates a new Main instance.
    */
   constructor() {
-    // Initialize components
+    // Initializing components
     this._terminal = new Terminal();
     this._object3D = new Object3D();
     this._projector = new Projection(
@@ -46,16 +46,16 @@ class Main {
     this._shading = new Shading();
     this._logger = new Logger(true, LogLevel.INFO);
     
-    // Define available shapes
+    // Defining available shapes
     this._shapes = {
       cube: () => this._object3D.createCube(new Vector3(0, 0, 0), Settings.OBJECT_SCALE),
       prism: () => this._object3D.createPrism(new Vector3(0, 0, 0), Settings.OBJECT_SCALE + 4, Settings.OBJECT_SCALE + 4),
     };
     
-    // Create the initial 3D object
+    // Creating the initial 3D object
     this._vertices = this._shapes[this._currentShape]();
     
-    // Initialize animation timer
+    // Initializing animation timer
     this._timer = new Timer(Settings.FPS, this._update.bind(this));
     
     this._logger.info("3D Terminal Animation initialized");
@@ -74,7 +74,7 @@ class Main {
    * Sets up keyboard controls.
    */
   private _setupControls(): void {
-    // Set stdin to raw mode to capture keystrokes
+    // Setting stdin to raw mode to capture keystrokes
     readline.emitKeypressEvents(process.stdin);
     if (process.stdin.isTTY) {
       process.stdin.setRawMode(true);
@@ -135,14 +135,14 @@ class Main {
    */
   private _update(): void {
     try {
-      // Clear the buffer for the next frame
+      // Clearing the buffer for the next frame
       this._terminal.clearBuffer();
       
-      // Auto-rotate the object
+      // Auto-rotating the object
       this._rotationX += Settings.ANIMATION_SPEED / 2;
       this._rotationY += Settings.ANIMATION_SPEED / 4;
       
-      // Apply rotation to vertices
+      // Applying rotation to vertices
       const rotatedVertices = Transformation.rotate(
         this._vertices,
         new Angle(this._rotationX),
@@ -150,22 +150,22 @@ class Main {
         new Angle(this._rotationZ)
       );
       
-      // Move the object away from the camera for better visibility
+      // Moving the object away from the camera for better visibility
       const translatedVertices = Transformation.translate(
         rotatedVertices,
         new Vector3(0, 0, Settings.RENDER_DISTANCE)
       );
       
-      // Project 3D vertices to 2D
+      // Projecting 3D vertices to 2D
       const projectedVertices = this._projector.project3Dto2D(translatedVertices);
       
-      // Get current shape faces
+      // Getting current shape faces
       const faces = this._currentShape === 'cube' ? this._object3D.getCubeFaces() : this._object3D.getPrismFaces();
       
-      // Render each face with appropriate shading
+      // Rendering each face with appropriate shading
       this._renderFaces(translatedVertices, projectedVertices, faces);
       
-      // Render info text
+      // Rendering info text
       this._terminal.drawText(1, 1, `Shape: ${this._currentShape}`, 0);
       this._terminal.drawText(1, 2, `FPS: ${this._timer.getCurrentFps().toFixed(1)}`, 0);
       this._terminal.drawText(1, 3, `Rotation: X=${this._rotationX.toFixed(1)} Y=${this._rotationY.toFixed(1)} Z=${this._rotationZ.toFixed(1)}`, 0);
@@ -185,28 +185,28 @@ class Main {
    */
   private _renderFaces(vertices3D: Vector3[], vertices2D: Vector2[], faces: number[][]): void {
     for (const face of faces) {
-      // Get the vertices for this face
+      // Getting the vertices for this face
       const v1 = vertices3D[face[0]];
       const v2 = vertices3D[face[1]];
       const v3 = vertices3D[face[2]];
       
-      // Calculate face normal for lighting
+      // Calculating face normal for lighting
       const normal = this._shading.calculateNormal(v1, v2, v3);
       
-      // Calculate average face position (for depth and lighting)
+      // Calculating average face position (for depth and lighting)
       const faceCenter = new Vector3(
         (v1.x + v2.x + v3.x) / 3,
         (v1.y + v2.y + v3.y) / 3,
         (v1.z + v2.z + v3.z) / 3
       );
       
-      // Check if face is facing towards the camera (back-face culling)
+      // Checking if face is facing towards the camera (back-face culling)
       if (faceCenter.z > 0) {
-        // Calculate light intensity and get appropriate ASCII character
+        // Calculating light intensity and getting appropriate ASCII character
         const intensity = this._shading.calculateLightIntensity(faceCenter, normal);
         const shadeChar = this._shading.getShadeChar(intensity);
         
-        // Draw the triangle edges
+        // Drawing the triangle edges
         this._terminal.drawLine(vertices2D[face[0]], vertices2D[face[1]], shadeChar, faceCenter.z);
         this._terminal.drawLine(vertices2D[face[1]], vertices2D[face[2]], shadeChar, faceCenter.z);
         this._terminal.drawLine(vertices2D[face[2]], vertices2D[face[0]], shadeChar, faceCenter.z);
@@ -215,6 +215,6 @@ class Main {
   }
 }
 
-// Create and start the application
+// Creating and starting the application
 const app = new Main();
 app.start();

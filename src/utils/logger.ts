@@ -69,8 +69,7 @@ export class Logger {
       const logMessage = `[${timestamp}] [${levelStr}] ${message}`;
   
       if (this._logFile) {
-        // In a real implementation, we would write to a file here
-        // For now, just console.log
+        // TODO: Implement file logging
         console.log(logMessage);
       } else {
         console.log(logMessage);

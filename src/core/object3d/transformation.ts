@@ -28,7 +28,7 @@ export class Transformation {
     origin: Vector3 = new Vector3(0, 0, 0)
   ): Vector3[] {
     return vertices.map(vertex => {
-      // Translate to origin, scale, translate back
+      // Translating to origin, scaling, translating back
       const translated = vertex.subtract(origin);
       const scaled = translated.multiply(scale);
       return scaled.add(origin);
@@ -52,7 +52,7 @@ export class Transformation {
     origin: Vector3 = new Vector3(0, 0, 0)
   ): Vector3[] {
     return vertices.map(vertex => {
-      // Translate to origin, rotate, translate back
+      // Translating to origin, rotating, translating back
       let rotated = vertex.subtract(origin);
       if(angleX) rotated = rotateX(rotated, angleX);
       if(angleY) rotated = rotateY(rotated, angleY);

@@ -37,18 +37,18 @@ export class Shading {
    * @returns the normal vector of the triangle face
    */
   calculateNormal(v1: Vector3, v2: Vector3, v3: Vector3): Vector3 {
-    // Calculate two edges of the triangle
+    // Calculating two edges of the triangle
     const edge1 = v2.subtract(v1);
     const edge2 = v3.subtract(v1);
     
-    // Calculate cross product of the two edges
+    // Calculating cross product of the two edges
     const normal = new Vector3(
       edge1.y * edge2.z - edge1.z * edge2.y,
       edge1.z * edge2.x - edge1.x * edge2.z,
       edge1.x * edge2.y - edge1.y * edge2.x
     );
     
-    // Normalize the normal vector
+    // Normalizing the normal vector
     const length = Math.sqrt(
       normal.x * normal.x + normal.y * normal.y + normal.z * normal.z
     );
@@ -71,10 +71,10 @@ export class Shading {
    * @returns light intensity (0-1)
    */
   calculateLightIntensity(point: Vector3, normal: Vector3): number {
-    // Calculate direction from point to light
+    // Calculating direction from point to light
     const lightDir = this._lightPosition.subtract(point);
     
-    // Normalize the light direction vector
+    // Normalizing the light direction vector
     const lightDirLength = Math.sqrt(
       lightDir.x * lightDir.x + lightDir.y * lightDir.y + lightDir.z * lightDir.z
     );
@@ -89,16 +89,16 @@ export class Shading {
       lightDir.z / lightDirLength
     );
     
-    // Calculate dot product of normal and light direction
+    // Calculating dot product of normal and light direction
     const dotProduct = 
       normal.x * normalizedLightDir.x + 
       normal.y * normalizedLightDir.y + 
       normal.z * normalizedLightDir.z;
     
-    // Calculate light intensity (dot product + ambient light)
+    // Calculating light intensity (dot product + ambient light)
     let intensity = Math.max(0, dotProduct) + this._ambientLight;
     
-    // Clamp intensity to [0, 1]
+    // Clamping intensity to [0, 1]
     intensity = Math.min(1, Math.max(0, intensity));
     
     return intensity;

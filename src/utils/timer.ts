@@ -58,14 +58,14 @@ export class Timer {
       const frameTime = 1000 / this._targetFps;
       
       if (elapsed >= frameTime) {
-        // Update frame counter
+        // Updating frame counter
         this._frameCount++;
         this._lastFrameTime = now;
         
-        // Execute the callback
+        // Executing the callback
         this._callback();
         
-        // Update FPS calculation
+        // Updating FPS calculation
         if (now - this._lastFpsUpdateTime >= this._fpsUpdateInterval) {
           this._currentFps = 
             (this._frameCount * 1000) / (now - this._lastFpsUpdateTime);
@@ -74,7 +74,7 @@ export class Timer {
         }
       }
       
-      // Schedule next frame
+      // Scheduling next frame
       setTimeout(() => this._animationLoop(), 1);
     }
   

@@ -25,7 +25,7 @@ export class Terminal {
     this._height = height;
     this._defaultChar = defaultChar;
     
-    // Initialize buffers
+    // Initializing buffers
     this._buffer = [];
     this._depthBuffer = [];
     
@@ -77,9 +77,9 @@ export class Terminal {
       const x = Math.floor(vertex.x);
       const y = Math.floor(vertex.y);
       
-      // Check if point is within screen bounds
+      // Checking if point is within screen bounds
       if (x >= 0 && x < this._width && y >= 0 && y < this._height) {
-        // Check depth buffer to determine if point should be drawn
+        // Checking depth buffer to determine if point should be drawn
         if (zDepth < this._depthBuffer[y][x]) {
           this._buffer[y][x] = char;
           this._depthBuffer[y][x] = zDepth;
@@ -111,9 +111,9 @@ export class Terminal {
     let y = y1;
     
     while (true) {
-      // Check if point is within screen bounds
+      // Checking if point is within screen bounds
       if (x >= 0 && x < this._width && y >= 0 && y < this._height) {
-        // Check depth buffer to determine if point should be drawn
+        // Checking depth buffer to determine if point should be drawn
         if (zDepth < this._depthBuffer[y][x]) {
           this._buffer[y][x] = char;
           this._depthBuffer[y][x] = zDepth;
@@ -145,9 +145,9 @@ export class Terminal {
     for (let i = 0; i < text.length; i++) {
       const posX = x + i;
       
-      // Check if position is within screen bounds
+      // Checking if position is within screen bounds
       if (posX >= 0 && posX < this._width && y >= 0 && y < this._height) {
-        // Check depth buffer to determine if character should be drawn
+        // Checking depth buffer to determine if character should be drawn
         if (zDepth < this._depthBuffer[y][posX]) {
           this._buffer[y][posX] = text[i];
           this._depthBuffer[y][posX] = zDepth;
@@ -160,23 +160,23 @@ export class Terminal {
    * Renders the frame buffer to the terminal.
    */
   render(): void {
-    // Hide cursor during rendering
+    // Hiding cursor during rendering
     process.stdout.write('\x1b[?25l');
     
-    // Move cursor to top-left corner
+    // Moving cursor to top-left corner
     this._moveCursor(0, 0);
     
-    // Render each line of the buffer
+    // Rendering each line of the buffer
     for (let y = 0; y < this._height; y++) {
       process.stdout.write(this._buffer[y].join(''));
       
-      // Move to the next line if not the last line
+      // Moving to the next line if not the last line
       if (y < this._height - 1) {
         process.stdout.write('\n');
       }
     }
     
-    // Show cursor after rendering
+    // Showing cursor after rendering
     process.stdout.write('\x1b[?25h');
   }
 
