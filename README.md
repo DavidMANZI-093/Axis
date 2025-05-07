@@ -26,6 +26,41 @@ The idea behind this project is intentionally minimal. We're working with vector
 
 After we dive into the fascinating math behind it all, We'll see how each piece transforms into clean, object-oriented code &mdash; where all the components come together to produce the final effect. Ready to step into the world of 3D vector space? Let's go!
 
+## Project Structure
+
+Before we dive into the mathematical concepts, let's take a moment to understand how our project is organized. I've structured the codebase to keep things modular and easy to follow:
+
+```
+src/
+├── app/
+│   ├── main.ts         # The main application entry point
+│   └── settings.ts     # Configuration settings
+│
+├── core/
+│   ├── math/           # Math foundations
+│   │   ├── projection.ts  # 3D to 2D projection
+│   │   ├── rotation.ts    # Rotation mathematics
+│   │   └── vector.ts      # Vector2 and Vector3 classes
+│   │
+│   ├── object3d/       # 3D object handling
+│   │   ├── shape.ts       # Object3D class for shapes
+│   │   └── transformation.ts  # Rotation and translation
+│   │
+│   └── renderer/       # Rendering system
+│       ├── shading.ts     # Lighting and shading
+│       └── terminal.ts    # Terminal display
+│
+└── utils/              # Utility functions
+    ├── logger.ts       # Logging functionality
+    └── timer.ts        # Animation timing
+```
+
+This modular structure makes it easy to understand the distinct components of our system. For instance, if you're curious about how we implement 3D rotations, you'll find that in `core/math/rotation.ts`. Or if you want to see how shapes are defined, look at `core/object3d/shape.ts`.
+
+This separation of concerns not only makes the code easier to navigate but also reflects the conceptual layers we'll explore throughout this README.
+
+Now, let's jump into the mathematical foundations that make all of this possible!
+
 ### The 3D and 2D Vector Space
 
 Let's start by thinking about a cube. Imagine you're holding one in your hand. In mathematics, this 3D object (and any 3D object, really) is represented by a set of points called vertices. When these points are connected, they form vectors, or edges, which define the shape. So when we talk about 3D space, each vertex has three coordinates: $(x,y,z)$.
