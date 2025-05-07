@@ -556,12 +556,12 @@ I hope you've enjoyed exploring this project with me. There's something magical 
 
 If you'd like to learn more about the concepts we've covered, check out resources on linear algebra, computer graphics fundamentals, and 3D rendering techniques. The principles we've used here are the same ones that power modern video games and 3D applications — just simplified to their essence.
 
-### A Note on AI-Assisted Development
+### A Note on Development Approach
 
-I'd like to share that this project represents what I believe is the proper use of AI as a copilot in the development process — not just another tool, but a collaborative partner in learning. Throughout this journey, we sourced mathematical documents together and engaged in extensive discussions about complex concepts, promoting logical understanding rather than simply generating code.
+Creating Axis has been a fascinating journey of learning and collaboration. Rather than being intimidated by 3D math concepts, I approached them systematically—researching thoroughly and breaking complex ideas into manageable pieces before writing any code.
 
-In this AI era, I believe the most valuable approach isn't traditional code retention or "vibe coding" (copy-pasting snippets without understanding). Instead, it's about using AI to enhance conceptual understanding, where we explore the why behind the how. The 3D math concepts in this project weren't just implemented; they were understood, discussed, and refined through meaningful collaboration.
+In today's development landscape, understanding concepts is more valuable than just writing code. AI assistants served not just as code generators, but as learning partners that helped explore the "why" behind the "how." This methodical process made Axis both powerful and approachable.
 
-This approach to AI-assisted development — focusing on learning and understanding — has made the journey of creating Axis as rewarding as the destination itself.
+The journey itself became as rewarding as the destination, proving that even seemingly complex 3D graphics can be conquered through thoughtful, step-by-step development focused on understanding rather than merely implementing.
 
 Happy coding, and enjoy your terminal-based 3D adventures!
