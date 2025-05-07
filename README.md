@@ -57,8 +57,6 @@ src/
 
 This modular structure makes it easy to understand the distinct components of our system. For instance, if you're curious about how we implement 3D rotations, you'll find that in `core/math/rotation.ts`. Or if you want to see how shapes are defined, look at `core/object3d/shape.ts`.
 
-This separation of concerns not only makes the code easier to navigate but also reflects the conceptual layers we'll explore throughout this README.
-
 Now, let's jump into the mathematical foundations that make all of this possible!
 
 ### The 3D and 2D Vector Space
