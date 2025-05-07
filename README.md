@@ -30,7 +30,7 @@ After we dive into the fascinating math behind it all, We'll see how each piece 
 
 Before we dive into the mathematical concepts, let's take a moment to understand how our project is organized. I've structured the codebase to keep things modular and easy to follow:
 
-```
+```markdown
 src/
 ├── app/
 │   ├── main.ts         # The main application entry point
@@ -70,7 +70,7 @@ What do these coordinates mean? Well:
 - $z$ represents depth — how far in or out of the screen (Good thing our screens can't really let things pop out, can they?)
 
 <p align="center">
-  <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Coord_planes_color.svg/800px-Coord_planes_color.svg.png" alt="A representation of a three-dimensional Cartesian coordinate system" height="275" style="border-radius: 8px;">
+  <img src="./assets/ax-0001.png" alt="A representation of a three-dimensional Cartesian coordinate system" height="275" style="border-radius: 8px;">
 </p>
 <p align="center"><i>A representation of a three-dimensional Cartesian coordinate system</i></p>
 
