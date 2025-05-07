@@ -94,19 +94,31 @@ When we rotate an object, we need to specify an axis to rotate around — X, Y, 
 - When we rotate around the X-axis, we're affecting the Y and Z coordinates:
 
 $$
-\begin{bmatrix} x' \\ y' \\ z' \end{bmatrix} = \begin{bmatrix} x \\ y.\cos(\theta) - z.\sin(\theta) \\ y.\sin(\theta) + z.\cos(\theta) \end{bmatrix}
+\begin{bmatrix} x' \\
+y' \\
+z' \end{bmatrix} = \begin{bmatrix} x \\
+y.\cos(\theta) - z.\sin(\theta) \\
+y.\sin(\theta) + z.\cos(\theta) \end{bmatrix}
 $$
 
 - When we rotate around the Y-axis, we're affecting the X and Z coordinates:
 
 $$
-\begin{bmatrix} x' \\ y' \\ z' \end{bmatrix} = \begin{bmatrix} x.\cos(\theta) - z.\sin(\theta) \\ y \\ -x.\sin(\theta) + z.\cos(\theta) \end{bmatrix}
+\begin{bmatrix} x' \\
+y' \\
+z' \end{bmatrix} = \begin{bmatrix} x.\cos(\theta) - z.\sin(\theta) \\
+y \\
+-x.\sin(\theta) + z.\cos(\theta) \end{bmatrix}
 $$
 
 - And when we rotate around the Z-axis, we're affecting the X and Y coordinates:
 
 $$
-\begin{bmatrix} x' \\ y' \\ z' \end{bmatrix} = \begin{bmatrix} x.\cos(\theta) - y.\sin(\theta) \\ x.\sin(\theta) + y.\cos(\theta) \\ z \end{bmatrix}
+\begin{bmatrix} x' \\
+y' \\
+z' \end{bmatrix} = \begin{bmatrix} x.\cos(\theta) - y.\sin(\theta) \\
+x.\sin(\theta) + y.\cos(\theta) \\
+z \end{bmatrix}
 $$
 
 Don't let these formulas intimidate you! The beautiful thing is that we can apply these rotations individually or combine them by applying them one after another. That's how we'll create smooth spinning animations — we'll just keep rotating slightly over time!
