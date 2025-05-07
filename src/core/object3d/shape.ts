@@ -62,7 +62,7 @@ export class Object3D {
             new Vector3(origin.x + halfBase, origin.y + halfHeight / 1.5, origin.z),
             new Vector3(origin.x - halfBase, origin.y + halfHeight / 1.5, origin.z),
             
-            new Vector3(origin.x, origin.y, origin.z - halfBase * 2),
+            new Vector3(origin.x, origin.y, origin.z - halfBase * 1.5),
         ]
     }
 
