@@ -70,16 +70,16 @@ What do these coordinates mean? Well:
 - $z$ represents depth — how far in or out of the screen (Good thing our screens can't really let things pop out, can they?)
 
 <p align="center">
-  <img src="./assets/ax-0001.png" alt="A representation of a three-dimensional Cartesian coordinate system" height="275" style="border-radius: 8px;">
+  <img src="./assets/ax-0001.png" alt="A representation of a three-dimensional Cartesian coordinate system" height="275">
 </p>
 <p align="center"><i>A representation of a three-dimensional Cartesian coordinate system</i></p>
 
 Now, when it comes to 2D space, things get a bit simpler — and that's what we'll need for our terminal-based project. Here, we only work with $(x,y)$ coordinates. We lose the depth component, which might seem limiting, but don't worry! That's where projection comes in... but let's not get ahead of ourselves. We'll get to that part soon.
 
-<figure style='display: flex; flex-direction: column; margin: 2rem auto; gap: 1rem'>
-    <img src='https://upload.wikimedia.org/wikipedia/commons/thumb/0/0e/Cartesian-coordinate-system.svg/250px-Cartesian-coordinate-system.svg.png' alt='Illustration of a Cartesian coordinate plane. Four points are marked and labeled with their coordinates: (2, 3) in green, (−3, 1) in red, (−1.5, −2.5) in blue, and the origin (0, 0) in purple.' style='display: block; margin: 0 auto; height: 16rem; background-color: #fff; border-radius: 0.5rem'>
-    <figcaption style='font-style: italic; margin: 0 auto; font-size: 85%'>Illustration of a two-dimensional Cartesian coordinate system. Four points are marked and labeled with their coordinates: (2, 3) in green, (−3, 1) in red, (−1.5, −2.5) in blue, and the origin (0, 0) in purple.</figcaption>
-</figure>
+<p align="center">
+  <img src="./assets/ax-0002.png" alt="Illustration of a two-dimensional Cartesian coordinate system" height="275">
+</p>
+<p align="center"><i>Illustration of a two-dimensional Cartesian coordinate system. Four points are marked and labeled with their coordinates: (2, 3) in green, (−3, 1) in red, (−1.5, −2.5) in blue, and the origin (0, 0) in purple.</i></p>
 
 In our project, I've implemented these coordinate systems in the `Vector3` and `Vector2` classes (you can find them in `src/core/math/vector.ts`). These classes form the foundation of all our spatial operations. Think of them as the building blocks that will help us create and manipulate our 3D objects before we render them in the terminal.
 
@@ -127,17 +127,17 @@ There are two main types of projection we could use:
 
 - **Perspective projection**: This one works like our eyes do — objects farther away appear smaller. It creates that realistic depth by scaling based on how far away things are (the z coordinate). It looks great, but it's not always practical in a terminal where we're limited by character size and grid spacing.
 
-<figure style='display: flex; flex-direction: column; margin: 2rem 0; gap: 1rem'>
-    <img src='https://player.slideplayer.com/13/3916031/data/images/img14.jpg' alt='Three-point perspective projection' style='display: block; margin: 0 auto; height: 16rem; background-color: #fff; border-radius: 0.5rem'>
-    <figcaption style='font-style: italic; margin: 0 auto; font-size: 85%'>Illustration of a three-point perspective projection.</figcaption>
-</figure>
+<p align="center">
+  <img src="./assets/ax-0003.jpg" alt="Three-point perspective projection" height="275">
+</p>
+<p align="center"><i>Illustration of a three-point perspective projection.</i></p>
 
 - **Orthographic projection**: With this approach, objects maintain their size regardless of depth. It ignores the z-axis for scaling, keeping things simple and accurate. Though it's less "realistic" than perspective, it's perfect for clean, readable representations, especially in text-based environments like our terminal.
 
-<figure style='display: flex; flex-direction: column; margin: 2rem 0; gap: 1rem'>
-    <img src='https://upload.wikimedia.org/wikipedia/commons/thumb/4/48/Axonometric_projection.svg/800px-Axonometric_projection.svg.png' alt='Axonometric projection.' style='display: block; margin: 0 auto; height: 16rem; background-color: #fff; border-radius: 0.5rem'>
-    <figcaption style='font-style: italic; margin: 0 auto; font-size: 85%'>Illustration of a three-point orthographic projection.</figcaption>
-</figure>
+<p align="center">
+  <img src="./assets/ax-0004.png" alt="Axonometric projection." height="275">
+</p>
+<p align="center"><i>Illustration of a three-point orthographic projection.</i></p>
 
 For our project, I've chosen to use orthographic projection because it provides a stable and clear representation of our 3D objects that works well in the terminal environment.
 
