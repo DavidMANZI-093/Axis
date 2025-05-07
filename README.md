@@ -570,7 +570,7 @@ If you'd like to learn more about the concepts we've covered, check out resource
 
 ### A Note on Development Approach
 
-Creating Axis has been a fascinating journey of learning and collaboration. Rather than being intimidated by 3D math concepts, I approached them systematically—researching thoroughly and breaking complex ideas into manageable pieces before writing any code.
+Creating Axis has been a fascinating journey of learning and collaboration. Rather than being intimidated by 3D math concepts, I approached them systematically &mdash; researching thoroughly and breaking complex ideas into manageable pieces before writing any code.
 
 In today's development landscape, understanding concepts is more valuable than just writing code. AI assistants served not just as code generators, but as learning partners that helped explore the "why" behind the "how." This methodical process made Axis both powerful and approachable.
 
