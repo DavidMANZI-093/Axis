@@ -1,6 +1,6 @@
 # Project Axis
 
-![Logo](./axis.jpg)
+![Concept](./assets/axis-concept.mp4)
 
 ## A Foreword
 
