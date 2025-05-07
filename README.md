@@ -69,11 +69,10 @@ What do these coordinates mean? Well:
 - $y$ tells us how far up or down it is
 - $z$ represents depth — how far in or out of the screen (Good thing our screens can't really let things pop out, can they?)
 
-
-    <figure style='display: flex; flex-direction: column; margin: 2rem auto; gap: 1rem'>
-        <img src='https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Coord_planes_color.svg/800px-Coord_planes_color.svg.png' alt='A representation of a three-dimensional Cartesian coordinate system' style='display: block; margin: 0 auto; height: 16rem; background-color: #fff; border-radius: 0.5rem'>
-        <figcaption style='font-style: italic; margin: 0 auto; font-size: 85%'>A representation of a three-dimensional Cartesian coordinate system</figcaption>
-    </figure>
+<p align="center">
+  <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Coord_planes_color.svg/800px-Coord_planes_color.svg.png" alt="A representation of a three-dimensional Cartesian coordinate system" height="275" style="border-radius: 8px;">
+</p>
+<p align="center"><i>A representation of a three-dimensional Cartesian coordinate system</i></p>
 
 Now, when it comes to 2D space, things get a bit simpler — and that's what we'll need for our terminal-based project. Here, we only work with $(x,y)$ coordinates. We lose the depth component, which might seem limiting, but don't worry! That's where projection comes in... but let's not get ahead of ourselves. We'll get to that part soon.
 
