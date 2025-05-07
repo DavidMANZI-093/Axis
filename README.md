@@ -292,41 +292,74 @@ To create a 3D object in our system, we:
 
 ```typescript
 // Initialize components
-const terminal = new Terminal(80, 24);
-const projection = new Projection(terminal.width, terminal.height);
-const renderer = new Renderer(projection);
-const shading = new Shading(" .,:-=+*#%@", new Vector3(0, 0, -10));
+const terminal = new Terminal();
+const object3D = new Object3D();
+const projector = new Projection(
+  terminal.getWidth(),
+  terminal.getHeight()
+);
+const shading = new Shading();
+const logger = new Logger(true, LogLevel.INFO);
 
-// Create a 3D cube
-const cube = new CubeBuilder()
-    .withSize(2)
-    .withPosition(0, 0, 0)
-    .build();
+// Define available shapes
+const shapes = {
+  cube: () => object3D.createCube(new Vector3(0, 0, 0), Settings.OBJECT_SCALE),
+  prism: () => object3D.createPrism(new Vector3(0, 0, 0), Settings.OBJECT_SCALE + 4, Settings.OBJECT_SCALE + 4),
+};
 
-// Animation parameters
-let rotationSpeed = 1;
+// Create the initial 3D object and set our current shape
+const currentShape = 'cube';
+const vertices = shapes[currentShape]();
 
-// Main rendering loop
-function animate() {
-    // Clear the terminal
-    terminal.clear();
-    
-    // Update cube rotation
-    cube.rotation.x += rotationSpeed;
-    cube.rotation.y += rotationSpeed * 0.5;
-    
-    // Render the frame
-    renderer.render(cube, terminal, shading);
-    
-    // Schedule the next frame
-    setTimeout(animate, 50);
+// Animation variables
+let rotationX = 0;
+let rotationY = 0;
+let rotationZ = 20;
+
+// The update function that handles animation
+function update() {
+  // Clear the buffer for the next frame
+  terminal.clearBuffer();
+  
+  // Auto-rotate the object
+  rotationX += Settings.ANIMATION_SPEED / 2;
+  rotationY += Settings.ANIMATION_SPEED / 4;
+  
+  // Apply rotation to vertices
+  const rotatedVertices = Transformation.rotate(
+    vertices,
+    new Angle(rotationX),
+    new Angle(rotationY),
+    new Angle(rotationZ)
+  );
+  
+  // Move the object away from the camera for better visibility
+  const translatedVertices = Transformation.translate(
+    rotatedVertices,
+    new Vector3(0, 0, Settings.RENDER_DISTANCE)
+  );
+  
+  // Project 3D vertices to 2D
+  const projectedVertices = projector.project3Dto2D(translatedVertices);
+  
+  // Get current shape faces
+  const faces = currentShape === 'cube' 
+    ? object3D.getCubeFaces() 
+    : object3D.getPrismFaces();
+  
+  // Render each face with appropriate shading
+  // ... rendering code here
+  
+  // Display the frame
+  terminal.render();
 }
 
-// Start the animation
-animate();
+// Create and start the animation timer
+const timer = new Timer(Settings.FPS, update);
+timer.start();
 ```
 
-This creates a continuous animation loop that updates and renders the cube 20 times per second, creating a smooth rotation effect.
+This creates a continuous animation loop that updates and renders our 3D objects in real-time, with proper handling of different shapes, transformations, and rendering.
 
 ## Rendering System Implementation
 
